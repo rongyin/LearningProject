@@ -38,10 +38,16 @@ lambda不允许抛出checked exception
 ##方法引用
 方法引用就是让你根据已有的方法来创建lambda表达式
 [import](http://www.importnew.com/30974.html)
-### 类：静态方法引用：第一个参数是实例方法的调用者，第二个是参数  
-### 现有对象：方法引用
-### 类：实例方法名
-### 构造函数引用 :构造器的参数列表和函数接口的参数列表相同
+
+类：静态方法引用：第一个参数是实例方法的调用者，第二个是参数  
+
+现有对象：方法引用
+
+类：实例方法名
+
+构造函数引用 :构造器的参数列表和函数接口的参数列表相同
+
+
 
 # 函数式接口(Functional Interfaces)
 “函数式接口”是指仅仅只包含一个抽象方法,但是可以有多个非抽象方法(也就是上面提到的默认方法)的接口。
@@ -52,9 +58,10 @@ lambda不允许抛出checked exception
 当Lambda表达式中只是执行一个方法调用时，不用Lambda表达式，直接通过方法引用的形式可读性更高一些。方法引用是一种更简洁易懂的Lambda表达式。
 ***
 
---------------------------------------------------
 
-***
+
+
+
 # Stream
 什么是流：它允许你以声明性方式处理数据集合，遍历数据集的高级迭代器，并且可以并行处理
 stream 自己不存储元素，不改变元素，延迟执行
@@ -76,14 +83,23 @@ Collection需要用户做迭代，叫外部迭代，stream使用内部迭代
 
     
 - 中间操作 (每次结果会产生新的stream )
-filter,limit,sorted,distinct,skip
-map将元素转化形式或者提取信息
-flatMap把一个流中每个值都换成另一个流，然后把所以流连接起来成为一个流
+  filter,limit,sorted,distinct,skip
+  map将元素转化形式或者提取信息
+  flatMap把一个流中每个值都换成另一个流，然后把所以流连接起来成为一个流
+
 - 终端操作
     * forEach,count,collect,allmatch,anymatch,nonematch,findFirst(返回Optional),findAny,max,min
-    reduce(流中元素反复结合，得到一个值)
+      reduce(流中元素反复结合，得到一个值)
+    
     * map和reduce是最著名的组合，因为Google用它来搜索 
-    *  Collectors 提供了很多静态方法创建Collector实例 
+    
+    * Collectors 提供了很多静态方法创建Collector实例 
+    
+      
+    
+- Numeric stream可以节省内存空间，还节省了box和unbox
+
+    
 
 ***
 #ParalleStream

@@ -1,6 +1,7 @@
 import com.sun.istack.internal.NotNull;
 import org.junit.Test;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -14,6 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.LongStream;
 
 public class Java8 {
@@ -66,24 +68,39 @@ public class Java8 {
 
     @Test
     public void collectTest(){
-       Map<Boolean,List<Room>> pMap= roomList.stream().collect(Collectors.partitioningBy(r-> r.getLeg()>5 ) );
-        System.out.println(pMap);
 
-        Map<String, List<Room>> mapRList = roomList.stream().collect(Collectors.groupingBy(Room::getTable));
-        System.out.println(mapRList);
+        Optional.of(roomList.stream().map(Room::getTable).collect(Collectors.joining(",","[","]"))).ifPresent(System.out::println);
+        System.out.println("------counting-------");
 
-        System.out.println(roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.summingInt(Room::getLeg))));
+        Optional.of(roomList.stream().collect(Collectors.counting())).ifPresent(System.out::println);
+        System.out.println("------summarize-------");
+        Optional.of(roomList.stream().collect(Collectors.summarizingInt(Room::getLeg))).ifPresent(System.out::println);
 
+        System.out.println("------grouping by-------");
+        Map<String,List<Room>> mapRlist1 = roomList.stream().collect(Collectors.groupingBy(Room::getTable));
+        mapRlist1.forEach( (s,l) -> System.out.println(s+":"+l.size()));
 
+        Map<String, Integer> mapRList2 = roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.summingInt(Room::getLeg)));
+        mapRList2.forEach( (s,i) -> System.out.println(s+","+i));
 
-        System.out.println(roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.collectingAndThen(Collectors.toSet(), list -> {
+        roomList.stream().collect(Collectors.groupingBy(Room::getTable,TreeMap::new,Collectors.averagingInt(Room::getLeg))).forEach( (s,i) -> System.out.println(s+","+i));
+
+        System.out.println("-------------END--------------");
+
+        System.out.println("------collectingAndThen by-------");
+
+        Optional.of(roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.collectingAndThen(Collectors.toSet(), list -> {
             list.add(new Room("hhf", 10));
             return list;
-        }))));
+        })))).ifPresent(System.out::println);
 
         System.out.println(roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.mapping(Room::getLeg, Collectors.toSet()))));
 
-        roomList.stream().collect(Collectors.collectingAndThen(Collectors.toList(), List::size));
+
+        Optional.of(roomList.stream().collect(Collectors.collectingAndThen(Collectors.averagingInt(Room::getLeg), i -> " this is average leg "+i ))).ifPresent(System.out::println);
+        System.out.println("------------END---------------");
+
+        System.out.println("------Collector -------");
 
         List<Room> cTest1 = roomList.stream().collect(ArrayList::new, List::add, List::addAll);
         System.out.println(cTest1);
@@ -138,6 +155,9 @@ public class Java8 {
             System.out.println(i);
         }
 
+        Map<Boolean,List<Room>> pMap= roomList.stream().collect(Collectors.partitioningBy(r-> r.getLeg()>5 ) );
+        System.out.println(pMap);
+
     }
 
     @Test
@@ -181,12 +201,18 @@ public class Java8 {
 
 
 
-
         Consumer<String> c = (t) -> System.out.println(t);
         c.andThen((s) -> System.out.println(s + ",then")).accept("g");
 
 
 
+    }
+
+    @Test
+    public void testNumericStream(){
+        int a = 9;
+        IntStream.range(1,100).filter(b -> Math.sqrt(a * a + b * b) % 1==0).mapToObj( t -> new int[]{ a, t , (int)Math.sqrt(a*a +t*t)})
+                .forEach( z -> System.out.println(z[0]+","+z[1]+","+z[2]));
     }
 
     @Test
