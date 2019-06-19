@@ -1,12 +1,101 @@
 
 # lambda
 
-**a lambda expression can be understood as a concise expression of an anonymous function that can
+** a lambda expression can be understood as a concise expression of an anonymous function that can
 be passed around : it doesn't have a name,but it has a list of parameters  a body,a return  type
-and possibly a list of exceptions that can be thrown.**
+and possibly a list of exceptions that can be thrown.
 
 lambda是匿名函数，它没有名称，但有参数列表，函数主体，返回类型，抛出异常，可以作为参数
 lambda可以用在函数式接口，代替匿名类
+** 函数式编程
+- 声明式编程：采用要做什么风格的编程。制定规则，给出希望实现的目标，让系统来决定如何实现这个目标，用这种方式编写代码更接近问题陈述。
+- 高阶函数 higher-order function :接受至少一个函数作为参数，返回的结果也是函数 Comparator<Apple> c = Comparator.comparing(Apple::getPrice)
+- 科里化：将n元组参数函数转化成n个一元函数链的方法。比如说摄氏转华氏公式，f(x)=x*9/5+32  (Double x)-> x*9/5+32
+- 函数式编程不包含while或者for这种迭代构造器，而用stream替代，从而避免变化带来的影响
+
+** lambda重构面向对象设计模式 , lambda表达式能够帮你解决设计模式的设计僵化问题。
+- 策略模式： 代表解决一类算法的通用解决方案，你可以在运行时选择使用那种方案。包含3部分
+    1. 一个代表某个算法的接口
+    2. 一个或多个接口的具体实现。
+    3. 一个或多个策略对象客户
+```
+public interface validationStrategy{
+    boolean execute(String s);
+}
+public class IsAllLowerCase implements validationStrategy{
+    boolean execute(String s){
+        return s.matches("[a-z]+");
+    }
+}
+
+
+public class IsNumeric implements validationStrategy{
+    boolean execute(String s){
+        return s.matches("\\d+");
+    }
+}
+
+Validator numericValidator = new Validator(new IsNumeric());
+
+Validator numericValidator = new Validator((s)->s.match("[a-z]+"));
+
+```
+ 
+- 模版方法：在一个方法中定义一个算法的骨架，而将一些步骤延迟到子类中。模板方法使得子类可以在不改变算法结构的情况下，重新定义算法中的某些步骤。
+```
+abstract class quoteBuilder{
+    void buildQuote(Param param){
+        Quote q = param.getQuite();
+        buildQuoteHeader(q)
+    }
+    abstract void buildQuoteHeader(Quote q);
+}
+
+void buildQuote(Param param,Consumer<Quote> buildQuoteHeader{
+
+    Quote q = param.getQuite();
+    buildQuoteHeader.accept(Quote q);
+}
+```
+- 观察者模式：如果一个Subject需要自动通知其他多个对象observer
+
+- 责任链模式： 处理对象序列的通用方案。
+```
+    UnaryOperator<Quote> quoteHeaderProcess = (Quote quote) -> {
+        //build quote header
+        return quote;
+    };
+    
+    UnaryOperator<Quote> quoteLineProcess = (Quote quote) -> {
+        //build quote Line
+        return quote;
+    };
+    quoteHeaderProcess.andThen(quoteLineProcess);
+    
+```
+- 工厂模式：无需暴露实例化逻辑就能完成对象的创建。
+```
+public class QuoteBuilderFactory {
+        public QuoteBuilder getQuoteBuilder(ConfigModelHeader model) {
+        if (ParserTypeConstant.IBM_POWER.equals(model.getConfigType())) {
+            return new IbmPowerQuoteBuilder();
+        } else if (ParserTypeConstant.GENERIC.equals(model.getConfigType())) {
+            GenericQuoteBuilder genericQuoteBuilder = new GenericQuoteBuilder();
+            return genericQuoteBuilder;
+        }
+}
+
+final static Map<String,QuoteBuilder> map = new HashMap<>();
+static {
+    map.put(ParserTypeConstant.IBM_POWER,IbmPowerQuoteBuilder::new);
+    map.put(ParserTypeConstant.GENERIC,GenericQuoteBuilder::new);
+}
+public QuoteBuilder getQuoteBuilder(String name){
+    map.get(name).get();
+}
+
+```
+
 
 lambda不允许抛出checked exception
 
@@ -88,6 +177,7 @@ Collection需要用户做迭代，叫外部迭代，stream使用内部迭代
   flatMap把一个流中每个值都换成另一个流，然后把所以流连接起来成为一个流
 
 - 终端操作
+    * 执行一次操作就永久终止
     * forEach,count,collect,allmatch,anymatch,nonematch,findFirst(返回Optional),findAny,max,min
       reduce(流中元素反复结合，得到一个值)
     
@@ -101,10 +191,101 @@ Collection需要用户做迭代，叫外部迭代，stream使用内部迭代
 
     
 
+- Collector
+
+    ```java
+    Collector<T, A, R>
+    ```
+
+    ```java
+    * @param <T> the type of input elements to the reduction operation
+    * @param <A> the mutable accumulation type of the reduction operation (often
+    *            hidden as an implementation detail)
+    * @param <R> the result type of the reduction operation
+    ```
+
+```java
+@Override
+@SuppressWarnings("unchecked")
+public final <R, A> R collect(Collector<? super P_OUT, A, R> collector) {
+    A container;
+    if (isParallel()
+            && (collector.characteristics().contains(Collector.Characteristics.CONCURRENT))
+            && (!isOrdered() || collector.characteristics().contains(Collector.Characteristics.UNORDERED))) {
+        container = collector.supplier().get();
+        BiConsumer<A, ? super P_OUT> accumulator = collector.accumulator();
+        forEach(u -> accumulator.accept(container, u));
+    }
+    else {
+        container = evaluate(ReduceOps.makeRef(collector));
+    }
+    return collector.characteristics().contains(Collector.Characteristics.IDENTITY_FINISH)
+           ? (R) container
+           : collector.finisher().apply(container);
+}
+```
+
+**Supplier<A> supplier();**  return a new mutable container 
+
+**Bicoumser<A, T> accumulator();** folds a valut into container.
+
+**BinaryOperator<A> combiner();** conbime two partial result into one result.
+
+**Function<A,R> finisher();** Perform the final transformation from the intermediate accumulation type
+
+{@code A} to the final result type {@code R}.
+
+**Set<Characteristics> characteristics();**  indicate the character of this Collector 
+
+```
+/**
+ * Indicates that this collector is <em>concurrent</em>, meaning that
+ * the result container can support the accumulator function being
+ * called concurrently with the same result container from multiple
+ * threads.
+ *
+ * <p>If a {@code CONCURRENT} collector is not also {@code UNORDERED},
+ * then it should only be evaluated concurrently if applied to an
+ * unordered data source.
+ */
+CONCURRENT,
+
+/**
+ * Indicates that the collection operation does not commit to preserving
+ * the encounter order of input elements.  (This might be true if the
+ * result container has no intrinsic order, such as a {@link Set}.)
+ */
+UNORDERED,
+
+/**
+ * Indicates that the finisher function is the identity function and
+ * can be elided.  If set, it must be the case that an unchecked cast
+ * from A to R will succeed.
+ */
+IDENTITY_FINISH
+```
+
+
+
+
+
+
+
+
+
+
+
 ***
+
+
+
 #ParalleStream
 Fork/Join 把一个大任务拆分成多个小任务，再将小任务运算结果汇总 
 并行流内部使用了默认的ForkJoinPool，默认线程数量，采用工作窃取模式（work-stealing）
+
+Spliterator是一个可分割迭代器(splitable iterator)，可以和iterator顺序遍历迭代器一起看。jdk1.8发布后，对于并行处理的能力大大增强，Spliterator就是为了并行遍历元素而设计的一个迭代器，jdk1.8中的集合框架中的数据结构都默认实现了spliterator
+
+
 
 default method
 ==============
@@ -135,3 +316,6 @@ LocalDateTime 和 LocalTime还有 LocalDate 一样，都是不可变的。
 # Annotation
 - 可重复注解 @Repetable
 - 可用于类型注解 @NonNull
+
+***
+# Future

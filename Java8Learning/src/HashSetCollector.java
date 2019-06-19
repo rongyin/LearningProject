@@ -44,7 +44,7 @@ public class HashSetCollector<String> implements Collector<String, HashMap<Strin
 	@Override
 	public Set<Characteristics> characteristics() {
 		// TODO Auto-generated method stub
-		return Collections.unmodifiableSet(EnumSet.of(
+		return Collections.unmodifiableSet(EnumSet.of(Characteristics.CONCURRENT,
 				Characteristics.UNORDERED));
 	}
 

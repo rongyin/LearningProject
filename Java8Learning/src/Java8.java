@@ -10,6 +10,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
+import java.util.function.BinaryOperator;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -20,7 +21,7 @@ import java.util.stream.LongStream;
 
 public class Java8 {
     static @NotNull
-    List<Room> roomList = Arrays.asList(new Room("t1", 3), new Room("t1", 4), new Room("t2", 9));
+    List<Room> roomList = Arrays.asList(new Room("t1", 3), new Room("t3", 4), new Room("t2", 9));
 
     static List<String> teamIndia = Arrays.asList("Virat", "Dhoni", "Jadeja");
     static List<String> teamAustralia = Arrays.asList("Warner", "Watson", "Smith");
@@ -64,11 +65,18 @@ public class Java8 {
         List<Integer> numList = Arrays.asList(5, 9, 3);
         System.out.println("num test:" + numList.stream().reduce(Integer::max).get());
         System.out.println("num test:" + numList.stream().reduce(1, (x, y) -> x + y).intValue());
+
+        roomList.stream().max(Comparator.comparing(Room::getLeg));
+        Optional.of(roomList.stream().reduce(BinaryOperator.maxBy(Comparator.comparing(Room::getLeg)))).ifPresent(System.out::println);
     }
 
     @Test
     public void collectTest(){
+        roomList.stream().collect(Collectors.toMap(Room::getTable,Room::getLeg)).forEach( (k,v) -> System.out.println(k+":"+v) );
 
+
+        System.out.println("------join and mapping-------");
+        Optional.of(roomList.stream().collect(Collectors.mapping(Room::getTable,Collectors.joining()))).ifPresent(System.out::println);
         Optional.of(roomList.stream().map(Room::getTable).collect(Collectors.joining(",","[","]"))).ifPresent(System.out::println);
         System.out.println("------counting-------");
 
@@ -85,7 +93,6 @@ public class Java8 {
 
         roomList.stream().collect(Collectors.groupingBy(Room::getTable,TreeMap::new,Collectors.averagingInt(Room::getLeg))).forEach( (s,i) -> System.out.println(s+","+i));
 
-        System.out.println("-------------END--------------");
 
         System.out.println("------collectingAndThen by-------");
 
@@ -98,7 +105,6 @@ public class Java8 {
 
 
         Optional.of(roomList.stream().collect(Collectors.collectingAndThen(Collectors.averagingInt(Room::getLeg), i -> " this is average leg "+i ))).ifPresent(System.out::println);
-        System.out.println("------------END---------------");
 
         System.out.println("------Collector -------");
 
@@ -123,7 +129,13 @@ public class Java8 {
 
         System.out.println(roomStr);
         System.out.println("cTest3---------");
+        System.out.println("cTest34---------");
+        List<String> list =Arrays.asList(new String[]{"1","2","3","4","5","6","7","8"});
+        list.stream().collect(new ToListCollector<String>());
+
+        System.out.println("cTest34---------");
         List<Room> cTest3 = roomList.parallelStream().collect(new ToListCollector<Room>());
+
         cTest3.stream().forEach(r -> System.out.println(r.getTable()));
 
         Set<String> hashSetTest = new HashSet<>();
@@ -181,6 +193,13 @@ public class Java8 {
                 .forEach(System.out::println);
 
 
+    }
+    @Test
+    public  void splitorTest(){
+        teamIndia.spliterator().tryAdvance(System.out::println);
+        teamIndia.spliterator().forEachRemaining(System.out::println);
+        teamPakistan.spliterator().trySplit().forEachRemaining(System.out::println);
+        Optional.of(teamPakistan.spliterator().trySplit()).ifPresent( s -> System.out.println(s.estimateSize()));
     }
 
     public static void main(String[] args) {
@@ -270,6 +289,8 @@ public class Java8 {
 
     @Test
     public void testForkJoin(){
+        System.setProperty("java.util.concurrent.ForkJoinPool.commonPool().getParallelism()","12");
+
         ForkJoinPool pool = new ForkJoinPool();
         ForkJoinTask<Long> test = new ForkJoinSumTest(0,200);
         Long sum = pool.invoke(test);
@@ -320,6 +341,10 @@ class Room {
         this.leg = leg;
     }
 
+    @Override
+    public String toString() {
+        return "[ "+ this.table+","+this.getLeg()+" ]";
+    }
 }
 
 interface QuoteFactory<T, O> {
