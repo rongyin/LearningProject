@@ -24,10 +24,10 @@ public class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
 		
 		Supplier<List<T>> s= () ->{
 			System.out.println("suppler...");
-			List<T> list = new ArrayList<T>();
+			List<T> list = new ArrayList<>();
 			Room r = new Room("table",45);
 			
-			//list.add((T) r);
+			list.add((T) r);
 			return list;
 		};
 		return s;
@@ -36,7 +36,7 @@ public class ToListCollector<T> implements Collector<T, List<T>, List<T>> {
 	@Override
 	public BiConsumer<List<T>, T> accumulator() {
 		BiConsumer<List<T>, T> bc = (list, t)->{
-			System.out.println("accumulator...");
+			System.out.println("accumulator..."+Thread.currentThread().getName());
 			list.add(t);
 		};
 		return bc;

@@ -4,15 +4,16 @@
 ** a lambda expression can be understood as a concise expression of an anonymous function that can
 be passed around : it doesn't have a name,but it has a list of parameters  a body,a return  type
 and possibly a list of exceptions that can be thrown.
-
+lambda表达式是对象，必须是依附于特别的对象，函数式接口。 
 lambda是匿名函数，它没有名称，但有参数列表，函数主体，返回类型，抛出异常，可以作为参数
 lambda可以用在函数式接口，代替匿名类
 ** 函数式编程
 - 声明式编程：采用要做什么风格的编程。制定规则，给出希望实现的目标，让系统来决定如何实现这个目标，用这种方式编写代码更接近问题陈述。
 - 高阶函数 higher-order function :接受至少一个函数作为参数，返回的结果也是函数 Comparator<Apple> c = Comparator.comparing(Apple::getPrice)
-- 科里化：将n元组参数函数转化成n个一元函数链的方法。比如说摄氏转华氏公式，f(x)=x*9/5+32  (Double x)-> x*9/5+32
+- ??科里化：将n元组参数函数转化成n个一元函数链的方法。比如说摄氏转华氏公式，f(x)=x*9/5+32  (Double x)-> x*9/5+32
 - 函数式编程不包含while或者for这种迭代构造器，而用stream替代，从而避免变化带来的影响
 
+?? 物理内存 lambda
 ** lambda重构面向对象设计模式 , lambda表达式能够帮你解决设计模式的设计僵化问题。
 - 策略模式： 代表解决一类算法的通用解决方案，你可以在运行时选择使用那种方案。包含3部分
     1. 一个代表某个算法的接口
@@ -31,7 +32,7 @@ public class IsAllLowerCase implements validationStrategy{
 
 public class IsNumeric implements validationStrategy{
     boolean execute(String s){
-        return s.matches("\\d+");
+        return `s.matches("\\d+")`;
     }
 }
 
@@ -128,11 +129,11 @@ lambda不允许抛出checked exception
 方法引用就是让你根据已有的方法来创建lambda表达式
 [import](http://www.importnew.com/30974.html)
 
-类：静态方法引用：第一个参数是实例方法的调用者，第二个是参数  
+类：静态方法引用：第一个参数是实例方法的调用者，第二个开始 是参数  
 
-现有对象：方法引用
+现有对象：方法引用 System.out::pringtln
 
-类：实例方法名
+类：实例方法名 
 
 构造函数引用 :构造器的参数列表和函数接口的参数列表相同
 
@@ -179,8 +180,13 @@ Collection需要用户做迭代，叫外部迭代，stream使用内部迭代
 - 终端操作
     * 执行一次操作就永久终止
     * forEach,count,collect,allmatch,anymatch,nonematch,findFirst(返回Optional),findAny,max,min
-      reduce(流中元素反复结合，得到一个值)
-    
+      reduce(流中元素反复结合，得到一个值) 
+     Collectors are most useful when used in a
+     multi-level reduction, downstream of {@code groupingBy} or
+     {@code partitioningBy}.  To perform a simple reduction on a stream,
+     use {@link Stream#reduce(BinaryOperator)} instead.
+    mutable reduction operation</a> that
+     accumulates input elements into a mutable result container
     * map和reduce是最著名的组合，因为Google用它来搜索 
     
     * Collectors 提供了很多静态方法创建Collector实例 
@@ -230,7 +236,7 @@ public final <R, A> R collect(Collector<? super P_OUT, A, R> collector) {
 **Bicoumser<A, T> accumulator();** folds a valut into container.
 
 **BinaryOperator<A> combiner();** conbime two partial result into one result.
-
+这个只会在并行流而且不是CONCURRENT
 **Function<A,R> finisher();** Perform the final transformation from the intermediate accumulation type
 
 {@code A} to the final result type {@code R}.
@@ -296,6 +302,20 @@ default method
 - 默认方法使用模式
     1. 可选方法，可以减少无效代码，实现类不需要声明每一个空的方法。
     2. 行为的多继承
+forEach
+```
+public interface Iterable<T>
+
+     * @since 1.8
+     */
+    default void forEach(Consumer<? super T> action) {
+        Objects.requireNonNull(action);
+        for (T t : this) {
+            action.accept(t);
+        }
+    }
+
+```    
 ***
 
 ## Optionals不是函数式接口，而是用于防止 NullPointerException 的漂亮工具

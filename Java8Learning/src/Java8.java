@@ -1,23 +1,21 @@
 import com.sun.istack.internal.NotNull;
+import com.sun.org.apache.xpath.internal.operations.Quo;
 import org.junit.Test;
 
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.DayOfWeek;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.BinaryOperator;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
+import java.util.function.*;
+import java.util.stream.*;
 
 public class Java8 {
     static @NotNull
@@ -45,6 +43,15 @@ public class Java8 {
     }
 
     @Test
+    public void FileTest(){
+        try {
+            Stream<String> lines = Files.lines(Paths.get("/Users/frankyin/IdeaProjects/LearningProject/dangdang1.txt"));
+            lines.forEach(System.out::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test
     public void findAnyTest(){
         List<String> teamPakistan = Arrays.asList("Misbah", "Afridi", "Afridi", "ffddsf", "fdfvd", "fdfwewe", "ewq");
         Optional<String> o =teamPakistan.parallelStream().filter( s-> s.startsWith("f")).findAny();
@@ -55,7 +62,7 @@ public class Java8 {
     public void mapReduceTest(){
         int summ1 = roomList.stream().map( r-> r.getLeg()).reduce(0, (x,y)->x+y );
         int summ2 = roomList.stream().collect(Collectors.summingInt(Room::getLeg));
-        Optional<Integer> summ3 = roomList.stream().map( r-> r.getLeg()).reduce(Integer::max);
+        Optional<Integer> summ3 = roomList.stream().map( r-> r.getLeg()).reduce(Integer::sum);
         System.out.println(summ1+","+summ2+","+summ3);
 
         System.out.println(roomList.stream().collect(Collectors.reducing("", Room::getTable, (s3, s2) -> s3 + s2)));
@@ -81,6 +88,7 @@ public class Java8 {
         System.out.println("------counting-------");
 
         Optional.of(roomList.stream().collect(Collectors.counting())).ifPresent(System.out::println);
+        Optional.of(roomList.stream().count()).ifPresent(System.out::println);
         System.out.println("------summarize-------");
         Optional.of(roomList.stream().collect(Collectors.summarizingInt(Room::getLeg))).ifPresent(System.out::println);
 
@@ -96,6 +104,17 @@ public class Java8 {
 
         System.out.println("------collectingAndThen by-------");
 
+
+       List<Room> cat = roomList.stream().collect(Collectors.collectingAndThen(Collectors.collectingAndThen(Collectors.toList(), set -> {
+            set.add(new Room("rr",2));
+            return set;
+        }), set2 -> {
+            set2.add(new Room("gg",5));
+            return set2;
+        }));
+       cat.stream().forEach( r-> System.out.println(r.getTable()));
+
+        System.out.println("------collectingAndThen by-------");
         Optional.of(roomList.stream().collect(Collectors.groupingBy(Room::getTable, Collectors.collectingAndThen(Collectors.toSet(), list -> {
             list.add(new Room("hhf", 10));
             return list;
@@ -110,7 +129,6 @@ public class Java8 {
 
         List<Room> cTest1 = roomList.stream().collect(ArrayList::new, List::add, List::addAll);
         System.out.println(cTest1);
-
         List<Room> cTest2 = roomList.stream().collect(ArrayList::new, (list, r) -> {
             r.setLeg(r.getLeg() + 1);
             list.add(r);
@@ -120,8 +138,8 @@ public class Java8 {
         });
         cTest2.stream().forEach(r -> System.out.println(r.getLeg()));
 
-        String roomStr = roomList.stream().collect(StringBuilder::new, (r, sb) -> {
-            r.append(sb.getTable());
+        String roomStr = roomList.stream().collect(StringBuilder::new, (sb, r) -> {
+            sb.append(r.getTable());
         }, (sw1, sw2) -> {
             sw1.append("sw1");
             sw2.append(sw1);
@@ -130,13 +148,14 @@ public class Java8 {
         System.out.println(roomStr);
         System.out.println("cTest3---------");
         System.out.println("cTest34---------");
-        List<String> list =Arrays.asList(new String[]{"1","2","3","4","5","6","7","8"});
-        list.stream().collect(new ToListCollector<String>());
+        //List<String> list =Arrays.asList(new String[]{"1","2","3","4","5","6","7","8"});
+        //list.stream().collect(new ToListCollector<>());
 
         System.out.println("cTest34---------");
-        List<Room> cTest3 = roomList.parallelStream().collect(new ToListCollector<Room>());
 
-        cTest3.stream().forEach(r -> System.out.println(r.getTable()));
+            List<Room> cTest3 = roomList.parallelStream().collect(new ToListCollector<Room>());
+
+            cTest3.stream().forEach(r -> System.out.println(r.getTable()));
 
         Set<String> hashSetTest = new HashSet<>();
         hashSetTest.add("1");
@@ -196,10 +215,15 @@ public class Java8 {
     }
     @Test
     public  void splitorTest(){
-        teamIndia.spliterator().tryAdvance(System.out::println);
-        teamIndia.spliterator().forEachRemaining(System.out::println);
-        teamPakistan.spliterator().trySplit().forEachRemaining(System.out::println);
-        Optional.of(teamPakistan.spliterator().trySplit()).ifPresent( s -> System.out.println(s.estimateSize()));
+
+
+
+
+        //teamIndia.spliterator().trySplit().trySplit().trySplit().trySplit().tryAdvance(System.out::println);
+
+        //teamIndia.spliterator().forEachRemaining(System.out::println);
+        //teamPakistan.spliterator().trySplit().forEachRemaining(System.out::println);
+        //Optional.of(teamPakistan.spliterator().trySplit()).ifPresent( s -> System.out.println(s.estimateSize()));
     }
 
     public static void main(String[] args) {
@@ -247,6 +271,7 @@ public class Java8 {
         String name = Optional.ofNullable(fac).map(f -> f.getB1()).map(b -> b.getQuote())
                 .map(q -> q.getName()).orElse(nothing);
 
+        Optional.ofNullable(fac).map( f ->f.getB1());
         Optional.ofNullable(fac).flatMap(f -> Optional.ofNullable(f.getB1())).filter( b-> b.getQuote()!=null);
         System.out.println("name is " + name);
 
@@ -256,7 +281,7 @@ public class Java8 {
     @Test
     public void lambdaExceptionTest(){
         //lambda Exception
-        Function<String, String> function1 = (String t) -> {
+        Function<Integer, String> function1 =  (t) -> {
             try {
 
             } catch (Exception e) {
@@ -279,9 +304,11 @@ public class Java8 {
     @Test
     public void testConstructMethod() {
         Function<Integer, String[]> fs = String[]::new;
+        fs.apply(10);
         //Constructor lambda
         Function<String, Room> s1 = Room::new;
         s1.apply("t");
+
         Supplier<String> su = String::new;
         su.get();
 
@@ -310,6 +337,46 @@ public class Java8 {
         System.out.println(in);
 
     }
+
+    @Test
+    public void testConsumer(){
+
+        List<String> list = new ArrayList<>();
+
+        Function<QuoteBuilderFactory,QuoteBuilderFactory> function1 = (qbf) ->{
+            list.add("test1");
+            qbf.setB1(new QuoteBuilder1());
+            return qbf;
+        };
+        Function<QuoteBuilderFactory,QuoteBuilderFactory> function2 = (qbf) ->{
+              qbf.getB1().setQuote(new Quote());
+            return  qbf;
+        };
+        Function<QuoteBuilderFactory,QuoteBuilderFactory> function3 = (qbf) ->{
+            qbf.getB1().getQuote().setName("gg");
+            return  qbf;
+        };
+        QuoteBuilderFactory apply = function1.andThen(function2)
+                .andThen(function3).apply(new QuoteBuilderFactory());
+
+        System.out.println(apply.getB1().getQuote().getName());
+    }
+
+    @Test
+    public void TestInterface(){
+        Foo2.C1 c1 = new Foo2.C1();
+        c1.say();
+        Integer i1 = Integer.valueOf(127);
+        Integer i2 = Integer.valueOf(127);
+        System.out.println(i1 == i2);
+        Integer i3 = Integer.valueOf(128);
+        Integer i4 = Integer.valueOf(128);
+        System.out.println(i3 == i4);
+        String integerCacheHighPropValue =
+                sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
+        System.out.println(integerCacheHighPropValue);
+    }
+
 }
 
 class Room {
@@ -390,12 +457,31 @@ class Quote {
 
 }
 
+@FunctionalInterface
 interface Foo1 {
     void bar(List<String> arg) throws IOException;
+
+    /**
+     *If
+     *  * an interface declares an abstract method overriding one of the
+     *  * public methods of {@code java.lang.Object}, that also does
+     *  * <em>not</em> count toward the interface's abstract method count
+     * @return
+     */
+    String toString();
 }
 
 interface Foo2 {
     void bar(List arg);
+    interface Foo3{
+
+    }
+    class C1 implements Foo3{
+        private String name ;
+        public void say(){
+            System.out.println("he");
+        }
+    }
 }
 
 interface Foo extends Foo1, Foo2 {
@@ -403,3 +489,5 @@ interface Foo extends Foo1, Foo2 {
         System.out.println("");
     }
 }
+
+
