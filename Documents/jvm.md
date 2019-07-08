@@ -1,9 +1,12 @@
 # 运行时数据区域
 ## vm stack :对应一个方法调用的入栈和出栈 (java -Xss)
-- local variable table ： 存储方法的参数和内部的局部变量
+- local variable table ： 存储方法的参数和内部的局部变量 ，还有类变量副本java member variable
 - operand stack: 方法执行过程中，各种字节码指令入栈和出栈
 - dynamic linking： 该栈所属方法的对应运行时常量池的引用
 - return address： 把返回值返回给上层调用者
+对于局部变量，如果是基本类型，会把值直接存储在栈；如果是引用类型，比如String s = new String("william");会把其对象存储在堆，而把这个对象的引用（指针）存储在栈。
+
+
 ## program counter Register ：bytecode interpreter change the counter value then get the command like loop, skip, exception handler.
 ## native method stack : the native method supplier.
 

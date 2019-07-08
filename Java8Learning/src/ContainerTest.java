@@ -6,6 +6,7 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ContainerTest {
@@ -167,6 +168,36 @@ String key2 = "key";
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+    }
+
+    @Test
+    public void SynchronousQueueTest() {
+        final SynchronousQueue q = new SynchronousQueue();
+        /*new Thread(()->{
+            try {
+                System.out.println(q.take());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }).start();*/
+        //q.add("e"); // will throw Queue full issue.
+        try {
+
+            q.put("d");//Adds the specified element to this queue, waiting if necessary for another thread to receive it.
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        /**
+         * Inserts the specified element into this queue if it is possible to do so
+         * immediately without violating capacity restrictions, returning
+         * <tt>true</tt> upon success and throwing an <tt>IllegalStateException</tt>
+         * if no space is currently available.
+         * */
+        /*new Thread(()->{
+            q.add("c");
+        }).start();*/
 
 
     }

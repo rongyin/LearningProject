@@ -77,6 +77,30 @@ A thread-safe variant of {@link java.util.ArrayList}
 不支持在其迭代器上对元素进行更改操作（remove, set和add），否则抛出UnsupportedOperationException。
 对列表读实现为非阻塞，但对列表的写入以阻塞的方式实现。写入时使用ReentrantLock保证线程安全。
 用途：可用在事件通知系统，在分发通知时需要迭代已注册监听器链表，并调用每一个监听器，在大多数情况下，注册和注销事件监听器的操作远少于接收事件通知的操作。
+```
+public E set(int index, E element) {
+        final ReentrantLock lock = this.lock;
+        lock.lock();//锁重入
+        try {
+            Object[] elements = getArray();
+            E oldValue = get(elements, index);
+
+            if (oldValue != element) {
+                int len = elements.length;
+                Object[] newElements = Arrays.copyOf(elements, len);
+                newElements[index] = element;
+                setArray(newElements);
+            } else {
+                // Not quite a no-op; ensures volatile write semantics
+                setArray(elements);
+            }
+            return oldValue;
+        } finally {
+            lock.unlock();
+        }
+
+```
+
 
 
 # HashMap
@@ -156,7 +180,7 @@ HashMap 在 put 的元素数量大于 Capacity * LoadFactor（默认16 * 0.75）
 你了解重新调整HashMap大小存在什么问题吗？
 
 
-# ConcurrentHashMap
+# ConcurrentHashMap / ConcurrentSkipLinkMap 支持并发排序
 实现线程安全的方式（重要）： ① 在JDK1.7的时候，ConcurrentHashMap（分段锁） 对整个桶数组进行了分割分段(Segment)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 
 到了 JDK1.8 的时候已经摒弃了Segment的概念，而是直接用 Node 数组+链表+红黑树的数据结构来实现，并发控制使用 synchronized 和 CAS 来操作。（JDK1.6以后 对 synchronized锁做了很多优化） 整个看起来就像是优化过且线程安全的 HashMap，虽然在JDK1.8中还能看到 Segment 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
 ② Hashtable(同一把锁) :使用 synchronized 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
@@ -241,3 +265,56 @@ A {@link NavigableSet} implementation based on a {@link TreeMap}.
 The elements are ordered using their {@linkplain Comparable natural
 ordering}, or by a {@link Comparator} provided at set creation
 time, depending on which constructor is used.
+
+
+# BlockingQueue
+ * A {@link java.util.Queue} that additionally supports operations
+ * that wait for the queue to become non-empty when retrieving an
+ * element, and wait for space to become available in the queue when
+ * storing an element.
+offer:  Inserts the specified element into this queue, waiting up to the
+specified wait time if necessary for space to become available.
+poll: Retrieves and removes the head of this queue, waiting up to the
+specified wait time if necessary for an element to become available.
+
+# ConcurrentLinkedQueue ：非阻塞队列
+适用于高并发环境的队列，通过无锁的方式（CAS），实现了高并发状态下的高性能，通常ConcurrentLinkedDeque
+性能好于blockingQueue.它是基于链接节点的无界线程安全队列。先进先出，不能有null
+add和offer一样,加到最后
+poll和peekd都是取得头元素，前者会删除
+ * An unbounded thread-safe {@linkplain Queue queue} based on linked nodes.
+ * This queue orders elements FIFO (first-in-first-out).
+ * The <em>head</em> of the queue is that element that has been on the
+ * queue the longest time.
+ * The <em>tail</em> of the queue is that element that has been on the
+ * queue the shortest time. New elements
+ * are inserted at the tail of the queue, and the queue retrieval
+ * operations obtain elements at the head of the queue.
+ * A {@code ConcurrentLinkedQueue} is an appropriate choice when
+ * many threads will share access to a common collection.
+ * Like most other concurrent collection implementations, this class
+ * does not permit the use of {@code null} elements.
+
+# ArrayBlockingQueue :阻塞队列 (ReentrantLock)
+A bounded blocking queue backed by an array。This queue orders elements FIFO
+fixed-sized array
+# LinkedBlockingQueue
+与ArrayBlockingQueue类似，只是无界 队列
+# PriorityQueue
+无界，基于优先级，队列元素必须继承Comparable
+# SynchronousQueue
+一种没有缓冲的队列，
+A {@linkplain BlockingQueue blocking queue} in which each insert operation must wait for a corresponding remove operation by another thread, and vice versa.
+# DelayQueue 对象要implements Delayed 
+ * An unbounded {@linkplain BlockingQueue blocking queue} of
+ * {@code Delayed} elements, in which an element can only be taken
+ * when its delay has expired.  The <em>head</em> of the queue is that
+ * {@code Delayed} element whose delay expired furthest in the
+ * past.  If no delay has expired there is no head and {@code poll}
+ * will return {@code null}. Expiration occurs when an element's
+ * {@code getDelay(TimeUnit.NANOSECONDS)} method returns a value less
+ * than or equal to zero.  Even though unexpired elements cannot be
+ * removed using {@code take} or {@code poll}, they are otherwise
+ * treated as normal elements. For example, the {@code size} method
+ * returns the count of both expired and unexpired elements.
+ * This queue does not permit null elements.
