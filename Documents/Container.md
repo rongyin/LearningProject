@@ -185,9 +185,17 @@ HashMap 在 put 的元素数量大于 Capacity * LoadFactor（默认16 * 0.75）
 到了 JDK1.8 的时候已经摒弃了Segment的概念，而是直接用 Node 数组+链表+红黑树的数据结构来实现，并发控制使用 synchronized 和 CAS 来操作。（JDK1.6以后 对 synchronized锁做了很多优化） 整个看起来就像是优化过且线程安全的 HashMap，虽然在JDK1.8中还能看到 Segment 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
 ② Hashtable(同一把锁) :使用 synchronized 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
 
+size() 与mappingcount
+Returns the number of mappings. This method should be used instead of {@link #size} because a ConcurrentHashMap may
+contain more mappings than can be represented as an int. The value returned is an estimate; the actual count may differ if
+there are concurrent insertions or removals.
+扩容
+已经有其它线程正在执行扩容了，则当前线程会尝试协助“数据迁移”；（多线程并发）
+没有其它线程正在执行扩容，则当前线程自身发起扩容。（单线程）
+
+
 # LinkedHashMap
 1. 继承自 HashMap，因此具有和 HashMap 一样的快速查找特性。
-2. 继承自 HashMap，因此具有和 HashMap 一样的快速查找特性。
 ```
     /**
      * The head (eldest) of the doubly linked list.
@@ -260,7 +268,7 @@ ConcurrentCache 采取的是分代缓存：
 
 # LinkedHashSet： LinkedHashSet 继承与 HashSet，并且其内部是通过 LinkedHashMap 来实现的。有点类似于我们之前说的LinkedHashMap 其内部是基于 Hashmap 实现一样，不过还是有一点点区别的。
 
-# TreeSet（有序，唯一）： 红黑树(自平衡的排序二叉树。)
+# TreeSet（有序，唯一）： 红黑树(自平衡的排序二叉树。) comparable or comparator 优先
 A {@link NavigableSet} implementation based on a {@link TreeMap}.
 The elements are ordered using their {@linkplain Comparable natural
 ordering}, or by a {@link Comparator} provided at set creation
@@ -318,3 +326,29 @@ A {@linkplain BlockingQueue blocking queue} in which each insert operation must 
  * treated as normal elements. For example, the {@code size} method
  * returns the count of both expired and unexpired elements.
  * This queue does not permit null elements.
+ 
+# ReferenceQueue
+ReferenceQueue是一个后进先出的数据结构
+ - Reference
+ 一个构造函数带需要注册到的引用队列，一个不带。带queue的意义在于我们可以吃从外部通过对queue的操作来了解到引用实例所指向的实际对象是否被回收了，同时我们也可以通过queue对引用实例进行一些额外的操作；但如果我们的引用实例在创建时没有指定一个引用队列，那我们要想知道实际对象是否被回收，就只能够不停地轮询引用实例的get()方法是否为空了。值得注意的是虚引用PhantomReference，由于它的get()方法永远返回null，因此它的构造函数必须指定一个引用队列。这两种查询实际对象是否被回收的方法都有应用，如weakHashMap中就选择去查询queue的数据，来判定是否有对象将被回收；而ThreadLocalMap，则采用判断get()是否为null来作处理。
+引用实例处于四种可能的内部状态之一：
+
+Active:
+reference 如果处于此状态，会受到垃圾处理器的特殊处理。当垃圾回收器检测到 referent 已经更改为合适的状态后(没有任何强引用和软引用关联)，会在某个时间将实例的状态更改为 Pending 或者 Inactive。具体取决于实例是否在创建时注册到一个引用队列中。在前一种情况下（将状态更改为 Pending），他还会将实例添加到 pending-Reference 列表中。新创建的实例处于活动状态。
+
+Pending:
+实例如果处于此状态，表明它是 pending-Reference 列表中的一个元素，等待被 Reference-handler 线程做入队处理。未注册引用队列的实例永远不会处于该状态。
+
+]'
+Enqueued:
+实例如果处于此状态，表明它已经是它注册的引用队列中的一个元素，当它被从引用队列中移除时，它的状态将会变为 Inactive，未注册引用队列的实例永远不会处于该状态。
+
+Inactive:
+实例如果处于此状态，那么它就是个废实例了(滑稽)，它的状态将永远不会再改变了。
+
+
+
+
+ - softReferenceQueue
+ - WeakReferenceQueue
+ - PhantomReferenceQueue

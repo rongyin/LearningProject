@@ -18,6 +18,16 @@ import java.util.function.*;
 import java.util.stream.*;
 
 public class Java8 {
+    @Test
+    public void testIntern(){
+        String n1 = new String("a1");
+        System.out.println(n1 == n1.intern());
+        System.out.println(n1.intern() == "a1");
+        System.out.println(n1 == "a1");
+        n1 = new String("c1").concat("b1");
+        System.out.println(n1 == n1.intern());
+    }
+
     static @NotNull
     List<Room> roomList = Arrays.asList(new Room("t1", 3), new Room("t3", 4), new Room("t2", 9));
 
