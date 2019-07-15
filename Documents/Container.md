@@ -1,4 +1,5 @@
 # Iterator and Iterable
+Iterable接口实现后的功能是“返回”一个迭代器
 Collection 继承了Iterable，Iterable 里提供了3个遍历方法（foreach ,iterator ,spliterator）
 Iterator 接口定义遍历Collection的具体方法 (hasNext,next,remove,forEachRemaining)
 优先使用Iterator中的remove方法
@@ -6,15 +7,16 @@ Iterator 接口定义遍历Collection的具体方法 (hasNext,next,remove,forEac
 基于一致性 (遍历时删除不会抛出ConcurrentModificationException)
 未实现 RandomAccess接口的list，优先选择iterator遍历
 实现了 RandomAccess 接口的list，优先选择普通 for 循环 ，其次 foreach
-
+采用ArrayList对随机访问比较快，而for循环中的get()方法，采用的即是随机访问的方法，因此在ArrayList里，for循环较快
+采用LinkedList则是顺序访问比较快，iterator中的next()方法，采用的即是顺序访问的方法，因此在LinkedList里，使用iterator较快
+从数据结构角度分析,for循环适合访问顺序结构,可以根据下标快速获取指定元素.而Iterator 适合访问链式结构,因为迭代器是通过next()和Pre()来定位的.可以访问没有顺序的集合.
 
 # ArrayList
 Resizable-array implementation of the <tt>List</tt> interface.
 This class is roughly equivalent to <tt>Vector</tt>, except that it is unsynchronized.
 Arraylist 底层使用的是 Object 数组
-每次自动增长容量都是+o。5倍(capacity) default is 10
+每次自动增长容量都是+0.5倍(capacity) default is 10
 ArrayList 实现了 RandomAccess 接口,RandomAccess 接口中什么都没有定义,只是个标示
-遍历：可以通过数组下标遍历访问列表中元素。或通过实现Iterator接口的Itr来遍历，其最终也是通过数组下标访问列表中元素。所以用下标和Iterator遍历ArrayList效率相差不大。
 
 fail-fast 机制是java集合(Collection)中的一种错误机制。当多个线程对同一个集合的内容进行操作时，就可能会产生fail-fast事件。
 例如：当某一个线程A通过iterator去遍历某集合的过程中，若该集合的内容被其他线程所改变了；那么线程A访问集合时，就会抛出ConcurrentModificationException异常，产生fail-fast事件。
@@ -180,7 +182,7 @@ HashMap 在 put 的元素数量大于 Capacity * LoadFactor（默认16 * 0.75）
 你了解重新调整HashMap大小存在什么问题吗？
 
 
-# ConcurrentHashMap / ConcurrentSkipLinkMap 支持并发排序
+# ConcurrentHashMap / ConcurrentSkipListMap 支持并发排序，Comparator作为构造函数
 实现线程安全的方式（重要）： ① 在JDK1.7的时候，ConcurrentHashMap（分段锁） 对整个桶数组进行了分割分段(Segment)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 
 到了 JDK1.8 的时候已经摒弃了Segment的概念，而是直接用 Node 数组+链表+红黑树的数据结构来实现，并发控制使用 synchronized 和 CAS 来操作。（JDK1.6以后 对 synchronized锁做了很多优化） 整个看起来就像是优化过且线程安全的 HashMap，虽然在JDK1.8中还能看到 Segment 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
 ② Hashtable(同一把锁) :使用 synchronized 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
@@ -196,6 +198,7 @@ there are concurrent insertions or removals.
 
 # LinkedHashMap
 1. 继承自 HashMap，因此具有和 HashMap 一样的快速查找特性。
+LinkedHashMap可以认为是HashMap+LinkedList，即它既使用HashMap操作数据结构，又使用LinkedList维护插入元素的先后顺序
 ```
     /**
      * The head (eldest) of the doubly linked list.
