@@ -1,19 +1,27 @@
 import org.junit.Test;
-import sun.nio.ch.Interruptible;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.LockSupport;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-import static java.util.concurrent.CompletableFuture.*;
 
 public class MThreadTest {
+    @Test
+    public void test(){
+        while(true){
+            try {
+                Thread.sleep(2000);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
 
+        }
+    }
 
     @Test
     public void FutureTest1() throws Exception {
@@ -395,9 +403,9 @@ public class MThreadTest {
 
                     semaphore.acquire();
                     System.out.println(Thread.currentThread().getName());
-                    if(semaphore.availablePermits()==0){
-                        semaphore.release();
-                    }
+                    //if(semaphore.availablePermits()==0){
+                    //    semaphore.release();
+                    //}
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -417,7 +425,7 @@ public class MThreadTest {
         ThreadClass threadClass = new ThreadClass();
         threadClass.start();
         //threadClass.interrupt();
-        threadClass.interrupt(threadClass);
+        //threadClass.interrupt(threadClass);
         System.out.println("isInterrupted:"+threadClass.isInterrupted());
         //测试isRunning
         /*try {
@@ -461,7 +469,7 @@ class RunnableClass implements Runnable{
     }
 }
 
-class ThreadClass extends Thread implements Interruptible {
+class ThreadClass extends Thread {
     public volatile boolean isRunning = true;//这个不是volatile的话，是会把副本传入vm stack
 
     @Override
@@ -481,9 +489,4 @@ class ThreadClass extends Thread implements Interruptible {
 
     }
 
-    @Override
-    public void interrupt(Thread thread) {
-        System.out.println("in the sub class interrupt.");
-        thread.interrupt();
-    }
 }

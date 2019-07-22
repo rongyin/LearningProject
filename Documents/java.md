@@ -49,7 +49,7 @@ JRE 是 Java运行时环境。它是运行已编译 Java 程序所需的所有�
 
 # 在 Java 8 中，Integer 缓存池的大小默认为 -128~127。
 
-# String 被声明为 final，因此它不可被继承。
+# String 被声明为 final，因此它不可被继承。而且里面的private final char value[]，stringbuilder不是
 1. 可以缓存 hash 值
 2. String Pool 的需要
 3. 当一个字符串调用 intern() 方法时，如果 String Pool 中已经存在一个字符串和该字符串值相等（使用 equals() 方法进行确定），那么就会返回 String Pool 中字符串的引用；否则，就会在 String Pool 中添加一个新的字符串，并返回这个新字符串的引用。

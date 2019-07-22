@@ -193,9 +193,17 @@ jmap 的作用并不仅仅是为了获取 dump 文件，它还可以查询 final
 
 1.	当排查线上问题时，需要查看GC日志，发现没有打印GC的详细日志，这时可以通过jinfo来开启Jvm参数 printGCDetails
 2.	当分析内存泄漏风险时，可以通过Jmap或jcmd定时获取堆对象的统计信息从而发现持续增长的可疑对象
-3.	当遇到某一时刻所有服务都出现耗时较高的情况，可以通过jstate来观察GC状况看看是不是GC停顿耗时过高了
+frankdeMacBook-Pro:~ frankyin$ jmap -clstats 57872
+Index Super InstBytes KlassBytes annotations   CpAll MethodCount Bytecodes MethodAll   ROAll   RWAll   Total ClassName
+    1    -1    505744        504           0       0           0         0         0      24     616     640 [B
+    2    18    210048        616         128   14224         109      4577     45464   18640   43096   61736 java.lang.String
+    3    18    169528        672           0   22120         139      5682     35520   24616   35592   60208 java.lang.Class
+
+3.	当遇到某一时刻所有服务都出现耗时较高的情况，可以通过jstat来观察GC状况看看是不是GC停顿耗时过高了
 4.	当遇到Jvm中某个服务卡死或者停止处理时，可以通过jstack来查看线程栈，看看是否有多个线程处于block状态产生死锁
 5.	当服务上线后发现性能达不到预期，可以用JMC来分析jvm运行信息看看哪些热点方法可以优化，哪些线程竞争可以避免
+JMC打开性能日志后，主要包括7部分性能报告，分别是一般信息、内存、代码、线程、I/O、系统、事件。其中，内存、代码、线程及I/O是系统分析的主要部分，本文会重点进行阐述。
+
 
 
 # forNamne 和 class,getClassLoader区别

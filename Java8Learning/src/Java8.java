@@ -1,8 +1,5 @@
-import com.sun.istack.internal.NotNull;
-import com.sun.org.apache.xpath.internal.operations.Quo;
 import org.junit.Test;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,10 +8,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.*;
+import java.util.function.BinaryOperator;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.*;
 
 public class Java8 {
@@ -28,7 +27,7 @@ public class Java8 {
         System.out.println(n1 == n1.intern());
     }
 
-    static @NotNull
+    static
     List<Room> roomList = Arrays.asList(new Room("t1", 3), new Room("t3", 4), new Room("t2", 9));
 
     static List<String> teamIndia = Arrays.asList("Virat", "Dhoni", "Jadeja");
@@ -338,6 +337,15 @@ public class Java8 {
     }
 
     @Test
+    public void testForkJionMerge(){
+        ForkJoinPool pool = new ForkJoinPool();
+        int[] data = {4,2,5,7,99,22,55,66,11,77,33,87,43};
+        ForkJoinMergeSort test = new ForkJoinMergeSort(data,0,data.length);
+        int[] result = pool.invoke(test);
+        Arrays.stream(result).forEach(System.out::println);
+    }
+
+    @Test
     public void testNewDate(){
         LocalDateTime ldt = LocalDateTime.now();
         System.out.println(ldt);
@@ -382,9 +390,9 @@ public class Java8 {
         Integer i3 = Integer.valueOf(128);
         Integer i4 = Integer.valueOf(128);
         System.out.println(i3 == i4);
-        String integerCacheHighPropValue =
+/*        String integerCacheHighPropValue =
                 sun.misc.VM.getSavedProperty("java.lang.Integer.IntegerCache.high");
-        System.out.println(integerCacheHighPropValue);
+        System.out.println(integerCacheHighPropValue);*/
     }
 
 }

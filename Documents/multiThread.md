@@ -205,6 +205,7 @@ zero due to invocations of the {@link #countDown} method
   <em>cyclic</em> because it can be re-used after the waiting threads
   are released.
 CyclicBarrier和CountDownLatch的区别
+CountdownLatch 需要设置state为N，每次countdown都为cas减1，等0的时候就unpark
 对于CountDownLatch来说，重点是“一个线程（多个线程）等待”，而其他的N个线程在完成“某件事情”之后，可以终止，也可以等待。而对于CyclicBarrier，重点是多个线程，在任意一个线程没有完成，所有的线程都必须等待。
 
 CountDownLatch是计数器，线程完成一个记录一个，只不过计数不是递增而是递减，而CyclicBarrier更像是一个阀门，需要所有线程都到达，阀门才能打开，然后继续执行。
@@ -212,3 +213,25 @@ CountDownLatch是计数器，线程完成一个记录一个，只不过计数不
 # Semaphore
 A counting semaphore.  Conceptually, a semaphore maintains a set of permits
 Each {@link #acquire} blocks if necessary until a permit is available, and then takes it.  Each {@link #release} adds a permit,potentially releasing a blocking acquirer.
+
+
+# 进程通信的方式
+1、管道( pipe ) 
+管道是一种半双工的通信方式，数据只能单向流动，而且只能在具有亲缘关系的进程间使用。进程的亲缘关系通常是指父子进程关系。 
+2、有名管道（FIFO） 
+名管道也是半双工的通信方式，但是它允许无亲缘关系进程间的通信。 
+3、信号 
+用于通知接收进程某个事件已经发生，主要作为进程间以及同一进程不同线程之间的同步手段。 
+4、信号量 
+信号量是一个计数器，可以用来控制多个进程对共享资源的访问。它常作为一种锁机制，防止某进程正在访问共享资源时，其他进程也访问该资源。 
+5、消息队列 
+消息队列是消息的链表，存放在内核中。一个消息队列由一个标识符（即队列ID）来标识。消息队列克服了信号传递信息少、管道只能承载无格式字节流以及缓冲区大小受限等缺点。 
+6、共享内存 
+共享内存（Shared Memory），指两个或多个进程共享一个给定的存储区。 
+特点： 
+共享内存是最快的一种 IPC，因为进程是直接对内存进行存取。 
+因为多个进程可以同时操作，所以需要进行同步。 
+信号量+共享内存通常结合在一起使用，信号量用来同步对共享内存的访问。 
+7、套接字 
+套接字也是一种进程间通信机制，与其他通信机制不同的是，它可用于不同机器间的进程通信
+
