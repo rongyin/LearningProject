@@ -1,5 +1,3 @@
-package com.cn.test.ag;
-
 import org.junit.Test;
 
 import java.util.Arrays;

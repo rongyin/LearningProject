@@ -1,7 +1,7 @@
-import org.junit.Assert;
+
+
 import org.junit.Test;
 
-import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -11,8 +11,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class ContainerTest {
 
+
     @Test
-    public void arrayListTest(){
+    public void arrayListTest() {
         AtomicInteger atomicInteger = new AtomicInteger();
         ArrayList<Integer> list = new ArrayList<>();
         list.add(1);
@@ -24,15 +25,15 @@ public class ContainerTest {
         list.add(7);
         Spliterator<Integer> spliterator = list.spliterator();
 
-        for (int i=0;i<3;i++){
-            new Thread(()->{
+        for (int i = 0; i < 3; i++) {
+            new Thread(() -> {
 
-                spliterator.trySplit().forEachRemaining((o)->{
-                    System.out.println(Thread.currentThread().getName()+" start:"+o);
+                spliterator.trySplit().forEachRemaining((o) -> {
+                    System.out.println(Thread.currentThread().getName() + " start:" + o);
                     atomicInteger.addAndGet(o);
-                    System.out.println(Thread.currentThread().getName()+":"+atomicInteger);
+                    System.out.println(Thread.currentThread().getName() + ":" + atomicInteger);
                 });
-                System.out.println(Thread.currentThread().getName()+" end");
+                System.out.println(Thread.currentThread().getName() + " end");
             }).start();
         }
 
@@ -47,12 +48,12 @@ public class ContainerTest {
     }
 
     @Test
-    public void testWeekMap(){
+    public void testWeekMap() {
         WeakReference<String> weakReference = new WeakReference<>("test");
-        WeakHashMap<Integer,Integer> weakHashMap = new WeakHashMap<>();
-        weakHashMap.put(1,2);
-        weakHashMap.put(2,3);
-        weakHashMap.put(3,4);
+        WeakHashMap<Integer, Integer> weakHashMap = new WeakHashMap<>();
+        weakHashMap.put(1, 2);
+        weakHashMap.put(2, 3);
+        weakHashMap.put(3, 4);
 
         System.gc();
         try {
@@ -60,50 +61,50 @@ public class ContainerTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        weakHashMap.forEach((k,v)->{
-            System.out.println(k+":"+v);
+        weakHashMap.forEach((k, v) -> {
+            System.out.println(k + ":" + v);
         });
-        System.out.println("weak "+weakReference.get());
+        System.out.println("weak " + weakReference.get());
     }
 
     @Test
-    public void testLinkedHashMap(){
-        LRUTest<Integer,String> linkedHashMap = new LRUTest<>();
-        linkedHashMap.put(1,"a");
-        linkedHashMap.put(2,"b");
-        linkedHashMap.put(3,"b");
+    public void testLinkedHashMap() {
+        LRUTest<Integer, String> linkedHashMap = new LRUTest<>();
+        linkedHashMap.put(1, "a");
+        linkedHashMap.put(2, "b");
+        linkedHashMap.put(3, "b");
         linkedHashMap.get(1);
-        linkedHashMap.put(4,"d");
-        linkedHashMap.forEach( (k,v) ->{
-            System.out.println(k+":"+v);
+        linkedHashMap.put(4, "d");
+        linkedHashMap.forEach((k, v) -> {
+            System.out.println(k + ":" + v);
         });
     }
 
     @Test
-    public void testMap(){
-        System.out.println( Integer.MAX_VALUE);
+    public void testMap() {
+        System.out.println(Integer.MAX_VALUE);
         System.out.println(1 << 30);
         int n = 6 - 1;
         n |= n >>> 1;
-        System.out.println( n);
+        System.out.println(n);
         n |= n >>> 2;
-        System.out.println( n);
+        System.out.println(n);
         n |= n >>> 4;
-        System.out.println( n);
+        System.out.println(n);
         n |= n >>> 8;
-        System.out.println( n);
+        System.out.println(n);
         n |= n >>> 16;
 
-        System.out.println( n);
+        System.out.println(n);
         Integer i1 = new Integer("2");
         Integer i2 = new Integer("4");
         System.out.println(i1.hashCode());
         System.out.println(i2.hashCode());
-    String key="test";
+        String key = "test";
 
-    String key1="west";
-String key2 = "key";
-        Integer key_h =    key.hashCode();
+        String key1 = "west";
+        String key2 = "key";
+        Integer key_h = key.hashCode();
         Integer key_16 = key_h >>> 16;
         Integer key1_h = key1.hashCode();
         Integer key2_h = key2.hashCode();
@@ -122,19 +123,21 @@ String key2 = "key";
         //100100
         //001111
         //& -> 000100
-        System.out.println( 15 & hash(key));
-        System.out.println( 31 & hash(key));
+        System.out.println(15 & hash(key));
+        System.out.println(31 & hash(key));
 
-        System.out.println( 15 & hash(key2));
-        System.out.println( 31 & hash(key2));
+        System.out.println(15 & hash(key2));
+        System.out.println(31 & hash(key2));
     }
+
     @Test
-   public void testQueue1(){
+    public void testQueue1() {
         PriorityQueue<Integer> pq = new PriorityQueue<>(3, Comparator.reverseOrder());
-            pq.offer(4);
+        pq.offer(4);
         pq.add(3);
         Optional.of(pq).ifPresent(System.out::println);
     }
+
     private String StrToBinstr(String str) {
         char[] strChar = str.toCharArray();
         String result = "";
@@ -148,17 +151,18 @@ String key2 = "key";
         int h;
         return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
     }
+
     @Test
-    public void testSet(){
+    public void testSet() {
         TreeSet<String> treeSet = new TreeSet<>();
         treeSet.add("2");
         boolean isAdd = treeSet.add("2");
-        Assert.assertEquals(false,isAdd);
+        //Assert.assertEquals(false, isAdd);
         treeSet.stream().forEach(System.out::println);
     }
 
     @Test
-    public void  testQueue2(){
+    public void testQueue2() {
         ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<>(2);
         try {
             queue.put("ff1");
@@ -201,6 +205,7 @@ String key2 = "key";
 
 
     }
+
     public final class ConcurrentCache<K, V> {
 
         private final int size;
@@ -235,8 +240,8 @@ String key2 = "key";
     }
 }
 
-class LRUTest<K,V> extends LinkedHashMap<K,V>{
-    LRUTest(){
+class LRUTest<K, V> extends LinkedHashMap<K, V> {
+    LRUTest() {
         super(3, 0.75f, true);
     }
 
