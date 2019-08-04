@@ -341,3 +341,25 @@ Explain plan for
 列的顺序：访问表靠后的列比前面的需要消耗额外的CPU资源
 设计数据仓库：星型模型
 
+# 查看索引碎片
+Oracle通过Segment Advisor ,如果你想自行解决，可以查看index_stats表，height>=4,Pct_used<50%,del_lf_row/lf_row>0.2 
+
+# 数据库表设计
+1. 业务要会切分
+2. 逻辑分层 基础信息加业务
+3. 数据库表结构设计与拆分 oracle分区 500万条个区，物化视图，中间表
+4. 数据规则
+5. 预留字段
+6. 做一些合理的冗余
+
+# 物化view 是虚表，但是会物理存储
+create **materialized** view 
+on commit 一旦基表有更新就刷新, on demand 频繁插入时候
+build immediate ,deferred 需要时候再生成
+refresh fast有一条就刷，complete全表刷新，force，never
+next 下次刷新间隔
+start with
+
+# synonym 
+
+# OLTP OLAP

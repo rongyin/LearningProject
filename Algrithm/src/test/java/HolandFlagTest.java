@@ -1,6 +1,6 @@
 import org.junit.Test;
 
-public class OtherSortTest {
+public class HolandFlagTest {
 
     @Test
     public void holandFlagSort(){
