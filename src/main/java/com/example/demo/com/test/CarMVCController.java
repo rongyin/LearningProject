@@ -1,4 +1,4 @@
-package com.cn;
+package com.example.demo.com.test;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.WebApplicationInitializer;

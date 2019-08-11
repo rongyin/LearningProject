@@ -1,5 +1,8 @@
 package com.example.demo.com.test;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class Car {
     private String name;
     private int price;

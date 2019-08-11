@@ -46,6 +46,8 @@ Docker, OpenStack, Kubernates
 
 # 数据流操作开发包
 SpringCLoud stream
+- SpringCLoud 是微服务全家桶
+- springboot是关注于快速，方便的开放单体的微服务个体，cloud是关注全局的微服务治理框架，cloud离不开boot
 
 # 事件消息总线
 Spring CLoud Bus 

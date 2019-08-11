@@ -1,4 +1,4 @@
-package com.cn;
+package com.example.demo.com.test;
 
 
 import org.springframework.beans.BeansException;
