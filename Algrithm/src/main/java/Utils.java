@@ -8,8 +8,8 @@ public class Utils {
     }
 
     public static void print(int[] data) {
-        Arrays.stream(data).forEach(d -> {
+        /*Arrays.stream(data).forEach(d -> {
             System.out.print(d + " ");
-        });
+        });*/
     }
 }

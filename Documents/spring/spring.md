@@ -417,3 +417,11 @@ The @CrossOrigin annotation enables cross-origin requests on annotated controlle
 3.2 只有其他请求把这个对象的result设置了，前面的方法才会得到响应
 3.3 可以设置timeout，时间到了也会返回错误信息 
 3.4 一般可以放在一个queue里面
+
+
+# servlet 3.1 标准 spi
+Meta-info 下有个javax.sevlet.ServletContainerInitailizer
+里面有SpringServletContainerInitailizer 这个类的@handler（）里有
+spring webpplicationinitializer 的onstart
+
+# @RestController = @Controller+@ResponsibleBoby

@@ -1,3 +1,4 @@
+
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -19,9 +20,11 @@ public class SortTest {
     }
 
     private static void print(int[] data) {
+
         Arrays.stream(data).forEach(d -> {
             System.out.print(d + " ");
         });
+
         System.out.println(" swap count " + swapCount);
     }
 
@@ -366,19 +369,19 @@ public class SortTest {
     }
 
     @Test
-    public void countingTest(){
-        int[] D = {2,3,4,5,2,3,4,5,3,8,5,3,9,4,3,5,2};
+    public void countingTest() {
+        int[] D = {2, 3, 4, 5, 2, 3, 4, 5, 3, 8, 5, 3, 9, 4, 3, 5, 2};
         int[] C = new int[10];
         for (int i = 0; i < D.length; i++) {
             C[D[i]]++;
         }
         for (int i = 1; i < C.length; i++) {
-            C[i] = C[i]+C[i-1];
+            C[i] = C[i] + C[i - 1];
         }
 
         int[] R = new int[D.length];
 
-        for (int i = D.length -1; i > 0; i--) {
+        for (int i = D.length - 1; i > 0; i--) {
             R[--C[D[i]]] = D[i];
         }
 
@@ -386,73 +389,75 @@ public class SortTest {
     }
 
     @Test
-    public void radixSoringTest(){
+    public void radixSoringTest() {
         int[] C = new int[10];
-        int[] D = {23,12,34,11,38,56,27,55,88,90,81,25};
+        int[] D = {23, 12, 34, 11, 38, 56, 27, 55, 88, 90, 81, 25};
 
 
         int[] R = new int[D.length];
         for (int i = 0; i < 2; i++) {
-            int m = (int) Math.pow(10,i);
+            int m = (int) Math.pow(10, i);
             for (int j = 0; j < D.length; j++) {
-                int index = D[j]/m %10;
+                int index = D[j] / m % 10;
                 C[index]++;
             }
             for (int j = 1; j < C.length; j++) {
-                C[j] = C[j]+C[j-1];
+                C[j] = C[j] + C[j - 1];
             }
 
-            for (int j = D.length-1; j >= 0; j--) {
-                int index = D[j]/m %10;
+            for (int j = D.length - 1; j >= 0; j--) {
+                int index = D[j] / m % 10;
                 //System.out.print(C[index] +":"+D[j]+" ");
                 R[--C[index]] = D[j];
 
             }
-            System.arraycopy(R,0,D,0,R.length);
+            System.arraycopy(R, 0, D, 0, R.length);
 
-            Arrays.fill(C,0);
+            Arrays.fill(C, 0);
         }
         print(D);
     }
 
     @Test
-    public void radixStringTest(){
-        String[] S = {"dd","cd","ed","bf","yy","ww","tt","gf","xw","aa","fb","ag","ya"};
+    public void radixStringTest() {
+        String[] S = {"dd", "cd", "ed", "bf", "yy", "ww", "tt", "gf", "xw", "aa", "fb", "ag", "ya"};
         String[] R = new String[S.length];
         int[] C = new int[25];
 
-        for (int i = 1; i >-1; i--) {
+        for (int i = 1; i > -1; i--) {
             for (int j = 0; j < S.length; j++) {
-               int index = getCharInt(S[j],i) - 97;
-               C[index]++;
+                int index = getCharInt(S[j], i) - 97;
+                C[index]++;
             }
 
             for (int j = 1; j < C.length; j++) {
-                C[j] = C[j-1]+C[j];
+                C[j] = C[j - 1] + C[j];
             }
 
 
-            for (int j = S.length-1; j >=0; j--) {
-                int index = getCharInt(S[j],i) - 97;
+            for (int j = S.length - 1; j >= 0; j--) {
+                int index = getCharInt(S[j], i) - 97;
                 R[--C[index]] = S[j];
             }
-            System.out.println(Arrays.stream(R).collect(Collectors.joining(","))) ;
-            Arrays.fill(C,0);
-            System.arraycopy(R,0,S,0,S.length);
+            System.out.println(Arrays.stream(R).collect(Collectors.joining(",")));
+            Arrays.fill(C, 0);
+            System.arraycopy(R, 0, S, 0, S.length);
         }
-        System.out.println(Arrays.stream(R).collect(Collectors.joining(","))) ;
+        System.out.println(Arrays.stream(R).collect(Collectors.joining(",")));
     }
-    private static int getMaxLen(String[] str){
+
+    private static int getMaxLen(String[] str) {
         int max = 0;
-        return Arrays.stream(str).map(s->s.length()).max(new Comparator<Integer>() {
+        return Arrays.stream(str).map(s -> s.length()).max(new Comparator<Integer>() {
             @Override
             public int compare(Integer o1, Integer o2) {
-                return o1-o2;
+                return o1 - o2;
             }
         }).get();
     }
-    private static int getCharInt(String s,int index){
-        if(s.length()<=index)
+
+    private static int getCharInt(String s, int index) {
+        if (s.length() <= index)
             return -1;
         return s.charAt(index);
     }

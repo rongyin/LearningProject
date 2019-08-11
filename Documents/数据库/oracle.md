@@ -360,6 +360,18 @@ refresh fast有一条就刷，complete全表刷新，force，never
 next 下次刷新间隔
 start with
 
-# synonym 
+# synonym 同义词
+可以指定schema可见 多用户可见
 
 # OLTP OLAP
+分区根据OLTP和OLAP，然后大于2g才有意义
+OLTP：联机事务处理（分布式事务），日常交易处理，实时读写要求高，业务简单，强一致事务
+OLAP：联机分机处理，多维度数据分析，统计，报表
+
+# 水平切分和垂直切分
+把一个数据库分成几个数据库的是垂直切分
+水平分割，需要查询次数多，数据量大
+
+
+# 分区
+range 分区
