@@ -28,7 +28,7 @@ synchronize 每个对象头里的mark word ，monitor里面有waitset和entrylis
 重入：一个对象sychronize可以获得自己对象另外的方法
 自旋锁，自适应锁，锁粗化，无锁，偏向锁（一个线程，该线程再次请求只需要检查mark word标记和当前线程id，cas），轻量级锁（一个线程进入同步块，另一个线程加入锁竞争），重量级锁
 Synchronize和reentrantlock ，
-一个是关键字，一个是累、
+一个是关键字，一个是类
 可以对获得锁的等待时间设置，避免死锁
 Renentrantlock可以获得锁的信息
 Renentrantlock 可以灵活实现多路通知
@@ -38,11 +38,11 @@ Renentrantlock 可以灵活实现多路通知
 4 JMM 主内存（实例，成员变量，static变量，类信息）和工作内存（栈：基本类型，引用） 主内存copy一份到工作内存
 5 volatile通过内存屏障精制指令重排
 6 cas缺点：循环时间长，开销大，只能保证一个共享变量原子性，ABA （AtomicStampReference）
-7 为什么需要线程池
-8.Excutor :运行新任务的简单接口，将任务的提交和任务执行解耦
+7.  为什么需要线程池
+8. Excutor :运行新任务的简单接口，将任务的提交和任务执行解耦
 ExecutorService:具备管理执行器和任务生命周期的方法，提交任务机制更完善 （比如说提供了callable参数，可以返回结果）
 ScheduleExecutorService:支持future和定期任务
-9 Threadpoolexecutor ：corePoolSize; corePoolSize 和max相等就是fixed
+9.  Threadpoolexecutor ：corePoolSize; corePoolSize 和max相等就是fixed
 maximunPoolsize(小于这个时候，大于coolPool ，当wrokquque满了才新增，如果超过max并且workquque满了，则交给handler处理), handler默认是直接抛出异常，还有用户自定义Policy，还有discardPolicy，discardoldestpolicy
 workQueue,
 keepAliveTime (线程池维护线程空余时间，如果超过这个，空余的线程销毁),
@@ -57,7 +57,9 @@ stop：不接受新任务，也不处理队列任务 shutdownnow方法
 tiding：所有任务中止了 workqueue为空
 terminated：terminated();
 start -> excute -> add worker -> create new worker thread -> run woker ->  acquire task -> commit task ->done
- 
+ https://juejin.im/post/5b3cf259e51d45194e0b7204
+ https://www.jianshu.com/p/6c6f396fc88e
+ https://www.jianshu.com/p/5df6e38e4362
 线程池大小： 
 Cpu密集型：cpu核数
 I/O密集型： cpu核数*(1+平均等待时间/平均工作时间)
