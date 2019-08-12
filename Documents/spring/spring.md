@@ -167,7 +167,7 @@ AnnotationAwareAspectJAutoProxyCreator 是一个后置处理器
 5.2.4         前置通知=》目标通知=》后置通知=》异常通知
 
 
-Spring 事务
+# Spring 事务
 方法上加@Transactional
 需要在config里加@EnableTransactionManagement 开启事务管理功能
 配置事务管理器
@@ -179,24 +179,24 @@ Spring 事务
 @EnableTransactionManagement 原理
 导入2个组件， 1个是后置处理器，代理对象执行方法利用拦截器链进行，还有个是代理事务管理，在方法执行时候，执行拦截器连
  
-四种隔离级别
+## 四种隔离级别
 4.1   Read uncommitted：这是隔离性最低的一种隔离级别，在这种隔离级别下，当前事务能够读取到其他事务已经更改但还未提交的记录，也就是脏读；
 4.2    Read committed：顾名思义，这种隔离级别只能读取到其他事务已经提交的数据，也就解决了脏读的问题，但是其无法解决不可重复读和幻读的问题；
 4.3    REPEATABLE_READ: 对相同字段的多次读取是一致的，除非数据被事务本身改变。可防止脏、不可重复读，但幻读仍可能发生
 4.4    SERIALIZABLE--完全服从ACID的隔离级别，确保不发生脏、幻、不可重复读。这在所有的隔离级别中是最慢的，它是典型的通过完全锁定在事务中涉及的数据表来完成的
 4.5    MySQL默认采用REPEATABLE_READ隔离级别；Oracle默认采用READ_COMMITTED隔离级别
- 事务传播行为：（七种）
-REQUIRED--支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。
+## 事务传播行为：（七种）
+- REQUIRED--支持当前事务，如果当前没有事务，就新建一个事务。这是最常见的选择。
 在外围方法未开启事务的情况下Propagation.REQUIRED修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。
 在外围方法开启事务的情况下Propagation.REQUIRED修饰的内部方法会加入到外围方法的事务中，所有Propagation.REQUIRED修饰的内部方法和外围方法均属于同一事务，只要一个方法回滚，整个事务均回滚
-SUPPORTS--支持当前事务，如果当前没有事务，就以非事务方式执行。
+- SUPPORTS--支持当前事务，如果当前没有事务，就以非事务方式执行。
 在外围方法未开启事务的情况下Propagation.REQUIRES_NEW修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。
 在外围方法开启事务的情况下Propagation.REQUIRES_NEW修饰的内部方法依然会单独开启独立事务，且与外部方法事务也独立，内部方法之间、内部方法和外部方法事务均相互独立，互不干扰。
-    MANDATORY--支持当前事务，如果当前没有事务，就抛出异常。
-    REQUIRES_NEW--新建事务，如果当前存在事务，把当前事务挂起。
-    NOT_SUPPORTED--以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
-    NEVER--以非事务方式执行，如果当前存在事务，则抛出异常。
-NESTED--如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与REQUIRED类似的操作。拥有多个可以回滚的保存点，内部回滚不会对外部事务产生影响。只对DataSourceTransactionManager有效
+- MANDATORY--支持当前事务，如果当前没有事务，就抛出异常。
+- REQUIRES_NEW--新建事务，如果当前存在事务，把当前事务挂起。
+- NOT_SUPPORTED--以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+- NEVER--以非事务方式执行，如果当前存在事务，则抛出异常。
+- NESTED--如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则进行与REQUIRED类似的操作。拥有多个可以回滚的保存点，内部回滚不会对外部事务产生影响。只对DataSourceTransactionManager有效
 在外围方法未开启事务的情况下Propagation.NESTED和Propagation.REQUIRED作用相同，修饰的内部方法都会新开启自己的事务，且开启的事务相互独立，互不干扰。
 在外围方法开启事务的情况下Propagation.NESTED修饰的内部方法属于外部事务的子事务，外围主事务回滚，子事务一定回滚，而内部子事务可以单独回滚而不影响外围主事务和其他子事务
 NESTED和REQUIRES_NEW都可以做到内部方法事务回滚而不影响外围方法事务。但是因为NESTED是嵌套事务，所以外围方法回滚之后，作为外围方法事务的子事务也会被回滚。而REQUIRES_NEW是通过开启新的事务实现的，内部事务和外围事务是两个事务，外围事务回滚不会影响内部事务。
@@ -207,12 +207,12 @@ BeanFactoryPostProcessor: beanFactory后置处理器，在BeanFactory标准初�
 BeanDefinitionRegistryPostProcessor： 在BeanFactoryPostProcessor之前This allows for adding further bean definitions Modify the application context's internal bean definition registry
 ApplicationListener: 监听容器发布事件，事件驱动模型
  
-JTA:
-JTA(Java Transaction Manager) : 是Java规范,是XA在Java上的实现.
+## JTA:
+- JTA(Java Transaction Manager) : 是Java规范,是XA在Java上的实现.
 1. TransactionManager : 常用方法,可以开启,回滚,获取事务. begin(),rollback()...
 2. XAResouce : 资源管理,通过Session来进行事务管理,commit(xid)...
 3. XID : 每一个事务都分配一个特定的XID
-JTA是如何实现多数据源的事务管理呢?
+- JTA是如何实现多数据源的事务管理呢?
 主要的原理是两阶段提交,以上面的请求业务为例,当整个业务完成了之后只是第一阶段提交,在第二阶段提交之前会检查其他所有事务是否已经提交,如果前面出现了错误或是没有提交,那么第二阶段就不会提交,而是直接rollback操作,这样所有的事务都会做Rollback操作.
 很多开发人员都会对 JTA 的内部工作机制感兴趣：我编写的代码没有任何与事务资源（如数据库连接）互动的代码，但是我的操作（数据库更新）却实实在在的被包含在了事务中，那 JTA 究竟是通过何种方式来实现这种透明性的呢？ 要理解 JTA 的实现原理首先需要了解其架构：它包括事务管理器（Transaction Manager）和一个或多个支持 XA 协议的资源管理器 ( Resource Manager ) 两部分， 我们可以将资源管理器看做任意类型的持久化数据存储；事务管理器则承担着所有事务参与单元的协调与控制。 根据所面向对象的不同，我们可以将 JTA 的事务管理器和资源管理器理解为两个方面：面向开发人员的使用接口（事务管理器）和面向服务提供商的实现接口（资源管理器）。其中开发接口的主要部分即为上述示例中引用的 UserTransaction 对象，开发人员通过此接口在信息系统中实现分布式事务；而实现接口则用来规范提供商（如数据库连接提供商）所提供的事务服务，它约定了事务的资源管理功能，使得 JTA 可以在异构事务资源之间执行协同沟通。以数据库为例，IBM 公司提供了实现分布式事务的数据库驱动程序，Oracle 也提供了实现分布式事务的数据库驱动程序， 在同时使用 DB2 和 Oracle 两种数据库连接时， JTA 即可以根据约定的接口协调者两种事务资源从而实现分布式事务。正是基于统一规范的不同实现使得 JTA 可以协调与控制不同数据库或者 JMS 厂商的事务资源，其架构如下图所示：
 
@@ -227,14 +227,14 @@ JTA的特点
 
  
  
-Spring 创建刷新：
-预处理：记录状态，检验属性
-获取Bean工厂，添加部分BeanPostProcessor
-BeanFactory 准备，添加ResourceLoader，AspectJ。。。
-执行BeanPostProcessors
-注册Bean的后置处理器
-初始化MessageSource（做国际化，消息绑定，消息解析）取出国家化配置文件中某个key值按照locale
-判断是否FactoryBean实现的Bean，不是再检查缓存中是否有这个bean，获取不到就开始创建bean流程开始
+# Spring 创建刷新：
+1. 预处理：记录状态，检验属性
+2. 获取Bean工厂，添加部分BeanPostProcessor
+3. BeanFactory 准备，添加ResourceLoader，AspectJ。。。
+4. 执行BeanPostProcessors
+5. 注册Bean的后置处理器
+6. 初始化MessageSource（做国际化，消息绑定，消息解析）取出国家化配置文件中某个key值按照locale
+7. 判断是否FactoryBean实现的Bean，不是再检查缓存中是否有这个bean，获取不到就开始创建bean流程开始
 获取Bean的定义信息，获取当前bean依赖的其他bean，如果有把依赖bean创建
 创建bean实例 ->利用工厂方法或者对象构造器创建->populateBean(InstantiationAwareBeanPostProcessor)->应用Bean属性的值，为属性利用setter赋值) ->beannameaware\factoryawre ->执行所有BeanPostProcessor的postProcessBeforeInitializtion->
 执行初始化方法（实现了InitiliazingBean or @initMethod）->执行所有BeanPostProcessor的postProcessAfterInitializtion ->注册销毁方法（是否实现DisposableBean,@destroyMethod）->addSingleton->完成BeanFactory的初始化创建工作，IOC容器创建完成
