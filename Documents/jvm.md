@@ -168,17 +168,25 @@ new PhantomRefeence(str,new ReferenceQueue());
 
 # JDK 监控和故障处理工具总结
 
+## linux 工具
+cpu占有率高时候
+uptime 看系统稳定性，运行时间，连接数
+top，vmstat 看进程占cpu，内存，交换空间（太大的化说明内存不够）
+pidstat 监控cpu，内存，进程，粒度到线程，查到线程id转成16精制，再用jstack去查找
 
-## jps:查看所有 Java 进程 ,类似 UNIX 的 ps 命令
+## 如果真的是java程序问题再通过java自带工具
 
-## jstat 
- 使用于监视虚拟机各种运行状态信息的命令行工具。 它可以显示本地或者远程（需要远程主机提供 RMI 支持）虚拟机进程中的类信息、内存、垃圾收集、JIT 编译等运行数据，在没有 GUI，只提供了纯文本控制台环境的服务器上，它将是运行期间定位虚拟机性能问题的首选工具
- 
+## jps:查看所有 Java 进程 ,类似 UNIX 的 ps 命令， -v -l -m 可以查看主函数的参数，比如看-xmax
+
 ## jinfo 
 输出当前 jvm 进程的全部参数和系统属性 
 使用 jinfo 可以在不重启虚拟机的情况下，可以动态的修改 jvm 的参数 
 
-## jmap:生成堆转储快照
+## jstat 
+ 使用于监视虚拟机各种运行状态信息的命令行工具。 它可以显示本地或者远程（需要远程主机提供 RMI 支持）虚拟机进程中的类信息、内存、垃圾收集、JIT 编译等运行数据，在没有 GUI，只提供了纯文本控制台环境的服务器上，它将是运行期间定位虚拟机性能问题的首选工具
+ 
+
+## jmap:生成堆转储快照 什么对象占用多少空间，还能老年代和新生代
 jmap 的作用并不仅仅是为了获取 dump 文件，它还可以查询 finalizer 执行队列、Java 堆和永久代的详细信息，如空间使用率、当前使用的是哪种收集器等。和jinfo一样，jmap有不少功能在 Windows 平台下也是受限制的。
 
 ## jhat: 分析 heapdump 文件
@@ -186,8 +194,9 @@ jmap 的作用并不仅仅是为了获取 dump 文件，它还可以查询 final
 ## jstack :生成虚拟机当前时刻的线程快照
 可以看到 jstack 命令已经帮我们找到发生死锁的线程的具体信息。
 
-## JConsole:Java 监视与管理控制台
+## JConsole:Java 监视与管理控制台 ， 看内存使用情况能强制gc
 
+## visual VM
 -XX:+PrintCLassHistogram
 可以打印类实例数量，大小
 
@@ -203,8 +212,8 @@ Index Super InstBytes KlassBytes annotations   CpAll MethodCount Bytecodes Metho
 4.	当遇到Jvm中某个服务卡死或者停止处理时，可以通过jstack来查看线程栈，看看是否有多个线程处于block状态产生死锁
 5.	当服务上线后发现性能达不到预期，可以用JMC来分析jvm运行信息看看哪些热点方法可以优化，哪些线程竞争可以避免
 JMC打开性能日志后，主要包括7部分性能报告，分别是一般信息、内存、代码、线程、I/O、系统、事件。其中，内存、代码、线程及I/O是系统分析的主要部分，本文会重点进行阐述。
-
-
+6. 比如说一个程序卡死，可以先用jps拿到id，然后jstack看线程
+7. jmeter https://blog.csdn.net/u012111923/article/details/80705141
 
 # forNamne 和 class,getClassLoader区别
 forName会初始化一个类
@@ -269,3 +278,7 @@ client模式默认
     
 8. jdk11 Epsilon和ZGC
 
+
+# 资料
+[Jvm](https://mp.weixin.qq.com/s?__biz=MzIxNjA5MTM2MA==&mid=2652435903&idx=2&sn=db7f8d28f9d8030cc467faabde76da8d&chksm=8c620a30bb1583263ad7afbb1424599e250ca8f3fc42cbfc7fc31ff9b2b5a1934ddbc6b1d804&mpshare=1&scene=23&srcid&sharer_sharetime=1565698353108&sharer_shareid=b72c5e5d68cc3a21303b060523ad0aa7%23rd
+)
