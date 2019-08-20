@@ -150,4 +150,4 @@ https://www.cnblogs.com/zyfd/p/9810858.html
 
 # 分片
 https://docs.mongodb.com/manual/core/sharded-cluster-components/
-
+http://www.lanceyan.com/tech/arch/mongodb_shard1.html
