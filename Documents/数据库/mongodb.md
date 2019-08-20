@@ -9,8 +9,8 @@
 
 
 # docker
-docker run -p 27017:27017 -v $PWD/db:/data/db -d mongo
-docker run -it mongo mongo --host 172.17.0.1
+- docker run -p 27017:27017 -v $PWD/db:/data/db -d mongo
+- docker run -it mongo mongo --host 172.17.0.1
 
 # 基本命令
 1. show dbs
@@ -144,4 +144,10 @@ db.setProfilingLevel(2)
 # bson
 - MongoDB使用了BSON这种结构来存储数据和网络数据交换。把这种格式转化成一文档这个概念(Document)，因为BSON是schema-free的，所以在MongoDB中所对应的文档也有这个特征，这里的一个Document也可以理解成关系数据库中的一条记录(Record)，只是这里的Document的变化更丰富一些，如Document可以嵌套。
 - bson size不能超过16MB的限制
+
+# 复制集（Replica Set）
+https://www.cnblogs.com/zyfd/p/9810858.html
+
+# 分片
+https://docs.mongodb.com/manual/core/sharded-cluster-components/
 
