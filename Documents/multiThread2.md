@@ -71,6 +71,7 @@ ScheduleExecutorService:支持future和定期任务
 12. 线程池大小： 
 Cpu密集型：cpu核数
 I/O密集型： cpu核数*(1+平均等待时间/平均工作时间)
+https://www.liangzl.com/get-article-detail-125814.html
 
 13. AQS
 https://github.com/rongyin/JavaGuide/blob/master/docs/java/Multithread/AQS.md
