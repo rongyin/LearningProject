@@ -53,7 +53,7 @@ listIterator 的remove必须要跟在next之后。
 public static <T> List<T> asList(T... a)
 ```
 
-# LinkedArrayList
+# LinkedList
 1.Doubly-linked list implementation of the {@code List} and {@code Deque} interfaces.
 2.this implementation is not synchronized
 3.LinkedList 底层使用的是 双向链表 数据结构（JDK1.6之前为循环链表，JDK1.7取消了循环。注意双向链表和双向循环链表的区别
@@ -61,7 +61,8 @@ public static <T> List<T> asList(T... a)
 5.遍历：如果通过index访问遍历链表中元素，每次都会循环遍历链表，效率很差。而通过Iterator (ListIterator) 遍历，效率会高。
 量
 6.使用LinkedList的唯一原因是需要在列表中间频繁添加删除元素。
-7.使用Iterator遍历List同时要remove/add修改List时，需要用Iterator的remove/add方法，而不是List的reomve/add方法。如果使用List的remove/add方法会导致ConcurrentModificationException。
+7.使用Iterator遍历List同时要remove/add修改List时，需要用Iterator的remove/add方法，而不是List的reomve/add方法。
+如果使用List的remove/add方法会导致ConcurrentModificationException。
 
 ```
     private static class Node<E> {
@@ -184,15 +185,17 @@ HashMap 在 put 的元素数量大于 Capacity * LoadFactor（默认16 * 0.75）
 
 
 # ConcurrentHashMap / ConcurrentSkipListMap 支持并发排序，Comparator作为构造函数
-实现线程安全的方式（重要）： ① 在JDK1.7的时候，ConcurrentHashMap（分段锁） 对整个桶数组进行了分割分段(Segment)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 
-到了 JDK1.8 的时候已经摒弃了Segment的概念，而是直接用 Node 数组+链表+红黑树的数据结构来实现，并发控制使用 synchronized 和 CAS 来操作。（JDK1.6以后 对 synchronized锁做了很多优化） 整个看起来就像是优化过且线程安全的 HashMap，虽然在JDK1.8中还能看到 Segment 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
-② Hashtable(同一把锁) :使用 synchronized 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
+实现线程安全的方式（重要）： 
+1. 在JDK1.7的时候，ConcurrentHashMap（分段锁） 对整个桶数组进行了分割分段(Segment)，每一把锁只锁容器其中一部分数据，多线程访问容器里不同数据段的数据，就不会存在锁竞争，提高并发访问率。 
+2. 到了 JDK1.8 的时候已经摒弃了Segment的概念，而是直接用 Node 数组+链表+红黑树的数据结构来实现，并发控制使用 synchronized 和 CAS 来操作。
+（JDK1.6以后 对 synchronized锁做了很多优化） 整个看起来就像是优化过且线程安全的 HashMap，虽然在JDK1.8中还能看到 Segment 的数据结构，但是已经简化了属性，只是为了兼容旧版本；
+3. Hashtable(同一把锁) :使用 synchronized 来保证线程安全，效率非常低下。当一个线程访问同步方法时，其他线程也访问同步方法，可能会进入阻塞或轮询状态，如使用 put 添加元素，另一个线程不能使用 put 添加元素，也不能使用 get，竞争会越来越激烈效率越低。
 
-size() 与mappingcount
+4. size() 返回int 与mappingcount()返回long
 Returns the number of mappings. This method should be used instead of {@link #size} because a ConcurrentHashMap may
 contain more mappings than can be represented as an int. The value returned is an estimate; the actual count may differ if
 there are concurrent insertions or removals.
-扩容
+5. 扩容
 已经有其它线程正在执行扩容了，则当前线程会尝试协助“数据迁移”；（多线程并发）
 没有其它线程正在执行扩容，则当前线程自身发起扩容。（单线程）
 

@@ -1,3 +1,12 @@
+# 敏捷开发
+敏捷开发以用户的需求进化为核心，采用迭代、循序渐进的方法进行软件开发。
+在敏捷开发中，软件项目在构建初期被切分成多个子项目，各个子项目的成果都经过测试，具备可视、可集成和可运行使用的特征。换言之，就是把一个大项目分为多个相互联系，但也可独立运行的小项目，并分别完成，在此过程中软件一直处于可使用状态。
+
+# workflow
+user story(backlog==demand) -> planning meeting -> sprint backlog -> separate tasks,ETA,Priority,plan for iterate->develop->test->release
+ 
+
+
 # Scrum
 https://www.visual-paradigm.com/scrum/what-is-scrum/
 

@@ -131,7 +131,7 @@ this.singletonObjects.put(beanName, singletonObject);
               }
        }
 ```
-AOP 【动态代理】： 指在程序运行期间动态的将某段代码切入到指定方法指定位置进行的编程方式
+# AOP 【动态代理】： 指在程序运行期间动态的将某段代码切入到指定方法指定位置进行的编程方式
 导入aop-aspect
 Aspect的5种通知（Advisor）
 前置通知：@Before
@@ -425,3 +425,13 @@ Meta-info 下有个javax.sevlet.ServletContainerInitailizer
 spring webpplicationinitializer 的onstart
 
 # @RestController = @Controller+@ResponsibleBoby
+
+# IOC
+总结：IoC容器的初始化过程就是将xml配置资源的信息抽象到BeanDefinition信息对象中，再将BeanDefinition设置到基本容器的map中，BeanDefinition中的信息是容器建立依赖反转的基础，IoC容器的作用就是对这些信息进行处理和维护。
+
+https://www.jianshu.com/p/ec166b79a75a
+
+# Aop
+- JdkDynamicAopProxy就是以动态代理的方式构建代理对象返回(具体动态代理原理自行了解哦)。
+
+- CglibAopProxy就是以Cglib的方式进行代理，Cglib采用了非常底层的字节码技术，其原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。具体细节超出这文章的范围拉。

@@ -3,7 +3,7 @@ package com.example.demo;
 import com.example.demo.com.test.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,6 +17,9 @@ public class Test1Controller {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
 
     @ResponseBody
     @RequestMapping("/hello")
@@ -29,6 +32,12 @@ public class Test1Controller {
         });
 */
         return list;
+    }
+
+    @ResponseBody
+    @RequestMapping("/redis")
+    public String getRedis(){
+        return stringRedisTemplate.opsForValue().get("myString");
     }
 
     @RequestMapping("/success")
