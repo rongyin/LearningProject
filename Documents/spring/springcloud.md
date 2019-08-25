@@ -19,6 +19,16 @@ Netflix的Archaius,阿里的Diamond
 
 # 服务的注册和管理
 Eureka, Consul, Zookeeper
+## Eureka
+1. 保护机制：某一时刻微服务不可用，eureka不会立刻清除，依旧会对该服务的信息就行保留
+## Euraka和ZOOkeeper比较
+1. Euraka保证AP，ZooKeeper保证CP（partition tolerant）
+https://blog.csdn.net/qq_35902689/article/details/78113317
+
+## Ribbon,Feign
+1. Ribbon是客户端负载均衡
+2. 
+
 
 # 服务的调度
 Rest，RPC， gRPC
@@ -51,3 +61,4 @@ SpringCLoud stream
 
 # 事件消息总线
 Spring CLoud Bus 
+
