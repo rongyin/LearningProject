@@ -1,6 +1,8 @@
 package com.example.demo;
 
+import com.example.demo.com.test.BusDao;
 import com.example.demo.com.test.Person;
+import org.bson.Document;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -10,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
-
+@ResponseBody
 @Controller
 public class Test1Controller {
 
@@ -20,12 +22,21 @@ public class Test1Controller {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
+    @Autowired
+    private BusDao busDao;
 
-    @ResponseBody
+
+    @RequestMapping("/bus")
+    public String busDao(){
+        busDao.onWork();
+        return "work";
+    }
+
     @RequestMapping("/hello")
     public List<Person> getName(){
 
         List<Person> list = mongoTemplate.findAll(Person.class);
+
 /*
         list.forEach(p->{
             System.out.println(p.getName()+":"+p.getAge());
@@ -34,7 +45,7 @@ public class Test1Controller {
         return list;
     }
 
-    @ResponseBody
+
     @RequestMapping("/redis")
     public String getRedis(){
         return stringRedisTemplate.opsForValue().get("myString");

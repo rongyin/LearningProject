@@ -1,0 +1,2 @@
+1. spring会关闭mybatis一级缓存
+把sqlSession关了

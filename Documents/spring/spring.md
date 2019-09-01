@@ -435,3 +435,12 @@ https://www.jianshu.com/p/ec166b79a75a
 - JdkDynamicAopProxy就是以动态代理的方式构建代理对象返回(具体动态代理原理自行了解哦)。
 
 - CglibAopProxy就是以Cglib的方式进行代理，Cglib采用了非常底层的字节码技术，其原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。具体细节超出这文章的范围拉。
+
+# factoryBean和beanFactory
+beanFactory是bean工厂
+Factorybean是个特殊的bean接口，里面有个getObject方法，实现FactoryBean的class在applicationcontext里面
+会注入getObject的类
+
+# 对象在spring中实例化
+- Classloader->register to BeanDefination(也可以实现BeanDefinationRegister就可以动态扩展加类，enableXXX都是加了Register)->Map（描述类）有接口可以改这个map(BeanFactoryPostProcessor)->singleton变成bean放在concurrentHashMap(IOC)->object
+- BeanDefinationRegister->FactoryBean->ioc

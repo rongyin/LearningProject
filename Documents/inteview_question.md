@@ -1,4 +1,5 @@
-jvm内存，css选择器，java函数表达式和js的函数表达式的原理和区别，mybatis中join的时候遇到相同名字的字段怎么处理，sql调优思路，分布式事务，对spring的理解
+jvm内存，css选择器，java函数表达式和js的函数表达式的原理和区别，
+mybatis中join的时候遇到相同名字的字段怎么处理，sql调优思路，分布式事务，对spring的理解
 还有数据库index的作用和影响，b+树和红黑树的比较
 
 数据库调优，查询慢日志，sql语句分析，index

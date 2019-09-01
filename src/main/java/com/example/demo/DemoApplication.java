@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Import;
 
 @Import(Config.class)
 @SpringBootApplication
+@EnableFrank
 public class DemoApplication {
 
 

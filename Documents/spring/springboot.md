@@ -278,4 +278,31 @@ Spring boot actuator是spring启动框架中的重要功能之一。Spring boot�
 
 
 
+# SpringBoot 处理异常的几种常见姿势
+1. 使用 @ControllerAdvice 和 @ExceptionHandler 处理全局异常
+ - 我们只需要在类上加上@ControllerAdvice注解这个类就成为了全局异常处理类，当然你也可以通过 assignableTypes指定特定的 Controller 类，让异常处理类只处理特定类抛出的异常。
+ - 通过ResponseStatusException会更加方便,可以避免我们额外的异常类。
+ ```
+ 
+    @GetMapping("/resourceNotFoundException2")
+    public void throwException3() {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Sorry, the resourse not found!", new ResourceNotFoundException());
+    }
+
+ ```
+ - ExceptionHandler
+ ```
+     @ExceptionHandler(value = Exception.class)// 拦截所有异常
+    public ResponseEntity<ErrorResponse> exceptionHandler(Exception e) {
+
+        if (e instanceof IllegalArgumentException) {
+            return ResponseEntity.status(400).body(illegalArgumentResponse);
+        } else if (e instanceof ResourceNotFoundException) {
+            return ResponseEntity.status(404).body(resourseNotFoundResponse);
+        }
+        return null;
+    }
+
+ ```
+
 
