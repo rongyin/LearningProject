@@ -146,6 +146,7 @@ db.setProfilingLevel(2)
 - bson size不能超过16MB的限制
 
 # 复制集（Replica Set）
+vote+priority
 https://www.cnblogs.com/zyfd/p/9810858.html
 
 # 分片

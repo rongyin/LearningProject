@@ -88,7 +88,7 @@ app.desc=${app.name:peter} is
 7.2 yaml 支持多文档块
 ```
 spring:
- prifiles:
+ profiles:
     active: dev
     
 ---
@@ -167,15 +167,15 @@ springboot官方推荐方案。
 缺点：模板必须符合xml规范，就这一点就可以判死刑！太不方便了！js脚本必须加入/*<![CDATA[*/标识，否则一个&符号就会导致后台模板合成抛异常，而且错误信息巨不友好
 
 优点： 
-1、不能编写java代码，可以实现严格的mvc分离 
-2、性能非常不错 
-3、对jsp标签支持良好 
-4、内置大量常用功能，使用非常方便 
-5、宏定义（类似jsp标签）非常方便 
-6、使用表达式语言 
+1. 不能编写java代码，可以实现严格的mvc分离 
+2. 性能非常不错 
+3. 对jsp标签支持良好 
+4. 内置大量常用功能，使用非常方便 
+5. 宏定义（类似jsp标签）非常方便 
+6. 使用表达式语言 
 缺点： 
-1、不是官方标准 
-2、用户群体和第三方标签库没有jsp多
+1. 不是官方标准 
+2. 用户群体和第三方标签库没有jsp多
 
 # spring mvc WebMvcAutoConfiguration 
 1. spring boot自动配置好了spring mvc
@@ -249,11 +249,11 @@ spring.devtools.restart.exclude: test/**
 
 ```
 3. Intellij Idea修改
-1、勾上自动编译或者手动重新编译
+1. 勾上自动编译或者手动重新编译
 
 File > Settings > Compiler-Build Project automatically
 
-2、注册
+2. 注册
 
 ctrl + shift + a + / > Registry > 勾选Compiler autoMake allow when app running
 

@@ -49,15 +49,15 @@ Bean的scope ，
 
 3. BeanNameAware的setBeanName(), 如果实现该接口，则执行其setBeanName 方法，加调该setBeanName方法可以让bean获取得自身的id属性
 
-4.BeanFactoryAware的setBeanFactory(), 如果实现该接口，则执行其setBeanFactory方法 ，通过这个方法的参数创建它的BeanFactory实例
+4. BeanFactoryAware的setBeanFactory(), 如果实现该接口，则执行其setBeanFactory方法 ，通过这个方法的参数创建它的BeanFactory实例
 
 5. BeanPostProcessor的processBeforeInitialization(),如果有关联的processor，则在Bean初始化之前都会执行这个实例的processBeforeInitialization() 方法
 
 6. InitializingBean的afterPropertiesSet(), 如果实现了该接口，则执行其afterPropertiesSet()方法。Bean定义文件中定义init-method
 
-7.BeanPostProcessors的processAfterInitialization(),如果有关联的processor，则在Bean初始化之前都会执行这个实例的processAfterInitialization()方法
+7. BeanPostProcessors的processAfterInitialization(),如果有关联的processor，则在Bean初始化之前都会执行这个实例的processAfterInitialization()方法
 
-8.DisposeablebBean的 destory(),在容器关闭时，如果Bean实现了这个接口，则执行他的destory()方法
+8. DisposeablebBean的 destory(),在容器关闭时，如果Bean实现了这个接口，则执行他的destory()方法
 
 9. Bean定义文件中定义destroy-method,在容器关闭时,可以在Bean定义文件中使用“destory-method”定义的方法
 
@@ -86,25 +86,25 @@ DI 方式 @AutoWired (required=false)就非必须加载 ，spring定义的
 3.2如果找到多个，再将属性名称作为组件id去容器中查找
 3.3 @Qualifier(“”) 指定组件id
 3.4 @Primary 首选装配 不能用Qualifier
-        4.  @Resource(name=””)  是java规范，默认是按照组件名称进行装配和AutoWired类似，不过没有Primary，require=false
-        5.  @Inject 也是java规范， 需要导入javax.inject包，和Autowired一样，不过里面没有属性required=false
-        6. @Autowired可以在
+4.  @Resource(name=””)  是java规范，默认是按照组件名称进行装配和AutoWired类似，不过没有Primary，require=false
+5.  @Inject 也是java规范， 需要导入javax.inject包，和Autowired一样，不过里面没有属性required=false
+6. @Autowired可以在
 6.1 构造器，@Autowired public Car(Car car){this.car=car} 如果只有一个构造器，可以省略@Autowired
 6.2 参数 private Car car
 6.3 方法 setCar 名字无所谓，spring容器创造当前对象时候调用该方法并赋值，方法的参数对象是从IOC容器里获取
 6.4 属性public Car(@Autowired Car car){this.car=car}  or setCar(@Autowired Car car){ this.car=car }
 6.5 @Bean标注的方法创建对象时候，方法参数的值从容器获取
-       7.  @Profile spring为我们提供可以根据当前环境，动态激活和切换一系列组件的功能，不如 切换开发，测试，生产环境
+7.  @Profile spring为我们提供可以根据当前环境，动态激活和切换一系列组件的功能，不如 切换开发，测试，生产环境
 加了这个标识，只有这个环境被激活的时候才能注册到容器中，@Profile(“default”) ，默认是default
 7.1 虚拟机参数 -Dspring.profiles.active=test
 7.2  applicationContext.getEnvironment().setActiveProfiles(“dev”,”test”) 然后在applicationContext.register(Config.class)
 applicationContext.refresh();//调用
 7.3 @Profile写在配置类上，指定的配置才能运行
- 
+```
 @Profile(“dev”)
 @Bean(“devDatasorece”)
 Public Datasouce datasourceDev(){}
-
+```
 
 Spring singleton bean:
 ```
@@ -329,7 +329,8 @@ public Account addAccount(@RequestParam String number) {
 # Spring MVC
 1. In a Servlet 3.0+ environment,implements WebApplicationInitializer and override the method onStartup
 WebApplicationInitializer is an interface provided by Spring MVC that ensures your implementation is detected and automatically used to initialize any Servlet 3 containe
-2. For many applications, having a single WebApplicationContext is simple and suffices. . It is also possible to have a context hierarchy where one root WebApplicationContext is shared across multiple DispatcherServlet
+2. For many applications, having a single WebApplicationContext is simple and suffices. . 
+It is also possible to have a context hierarchy where one root WebApplicationContext is shared across multiple DispatcherServlet
 ```
 AnnotationConfigWebApplicationContext webCtx = new AnnotationConfigWebApplicationContext();
 webCtx.register(QuotingServletConfig.class);
