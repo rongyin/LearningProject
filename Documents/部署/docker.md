@@ -29,7 +29,10 @@ ENV NAME World
 
 # 设置容器进程为：python app.py，即：这个 Python 应用的启动命令
 CMD ["python", "app.py"]
-
+entrypoint [""]
 
 ```
 
+- An ENTRYPOINT allows you to configure a container that will run as an executable.
+- The main purpose of a CMD is to provide defaults for an executing container. These defaults can include an executable, or they can omit the executable, in which case you must specify an ENTRYPOINT instruction as well.
+- RUN 指令：用于指定 docker build 过程中要运行的命令。

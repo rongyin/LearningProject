@@ -21,10 +21,13 @@
 * ObjectMessage：一种主体中包含序列化Java对象的消息。
 * BytesMessage：一种主体中包含连续字节流的消息。
 
-消息的传递模型：
+# 消息的传递模型：
 JMS支持两种消息传递模型：点对点(point-to-point，简称PTP)和发布/订阅(publish/subscribe，简称pub/sub)。
 二者有以下区别：
 1. PTP 消息传递模型规定了一条消息只能传递给一个接收方。采用javax.jms.Queue表示。
 2. Pub/sub 消息传递模型允许一条消息传递给多个接收方。采用javax.jms.Topic表示。
 注意：每种模型都通过扩展公用基类来实现。例如，javax.jms.Queue 和javax.jms.Topic都扩展自javax.jms.Destination 类。
 
+# active mq
+1. PTP默认是持久化的先进先出的队列，可以设置超时时间（一般没人设置），默认是kahadb,可以改成jdbc
+2. Pub/sub默认是非持久化

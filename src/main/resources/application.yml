@@ -8,6 +8,13 @@ spring:
     host: 127.0.0.1
     port: 6379
     database: 0
+  datasource:
+    url: jdbc:mysql://localhost:3306/frank1
+    username: root
+    password: root
+    driver-class-name: com.mysql.jdbc.Driver
+  jpa:
+    show-sql: true
 logging:
   level:
     #改为自己的mapper包路径

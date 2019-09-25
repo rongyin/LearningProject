@@ -1,3 +1,19 @@
+# springboot 优点
+- 组件自动装配：约定大于配置，专注核心业务
+- 外部化配置： 一次构建，按需调配，到处运行
+- 内置式容器： 内置容器，无需部署，独立运行
+- Spring Boot Starter: 简化依赖，按需装配
+- Production-Ready: 一站式运帷，生态无缝整合
+
+# 难点
+- 组件自动装配： 模式注解，@Enable 模块，条件装配，加载机制
+- 外部化配置： Environment 抽象，生命周期，破坏性变更
+- 嵌入式容器： Servlet Web容器，Reactive 容器
+- Spring Boot Starter： 依赖管理，装配条件，装配顺序
+- Production-Ready: 健康检查，数据指标，@EndPoint 管控
+
+# spring boot和spring mvc
+Spring Boot是一套遵循的约定大于配置的体系，简化了很多组件的使用比如datasouce、JPA、SpringMVC等等，约定好自动化的配置，就可以使用功能。使用的技术还是Spring体系的，Spring mvc在其中也有使用。同时SpringBoot有各种starter，包含了当前功能必须的各种Maven依赖，简化了依赖冲突的管理问题。本质来说就是个常用开发框架整合包，类似与项目开始开发拿到的初始可运行框架。
 
 
 # @SpringBootApplication 自动配置原理
@@ -127,6 +143,17 @@ boot里面新加了很多
 日志门面：JCL 2014年最后更新，SLF4J，jboss-loggging（特殊框架使用）
 日志实现：log4j没有logback先进
 SpringBoot：Spring框架默认使用JCL，SpringBoot选用SLF4J和logback
+- 更快的实现 
+Logback的内核重写了，在一些关键执行路径上性能提升10倍以上。而且logback不仅性能提升了，初始化内存加载也更小了。 
+- 自动重载配置文件 
+当配置文件修改了，Logback-classic能自动重新加载配置文件。扫描过程快且安全，它并不需要另外创建一个扫描线程。这个技术充分保证了应用程序能跑得很欢在JEE环境里面。 
+- Filters（过滤器） 
+有些时候，需要诊断一个问题，需要打出日志。在log4j，只有降低日志级别，不过这样会打出大量的日志，会影响应用性能。在Logback，你可以继续保持那个日志级别而除掉某种特殊情况，如alice这个用户登录，她的日志将打在DEBUG级别而其他用户可以继续打在WARN级别。要实现这个功能只需加4行XML配置。可以参考MDCFIlter 
+- SiftingAppender（一个多功能的Appender） 
+它可以用来分割日志文件根据任何一个给定的运行参数。如，SiftingAppender能够区别日志事件跟进用户的Session，然后每个用户会有一个日志文件。 
+- 自动压缩log日志 
+RollingFileAppender在产生新文件的时候，会自动压缩已经打出来的日志文件。压缩是个异步过程，所以甚至对于大的日志文件，在压缩过程中应用不会受任何影响。 
+
 11.2 统一日志记录，其他框架也使用slf4j
 - 将系统中其他日志框架先排除
 在pom里面可以排除
