@@ -81,7 +81,8 @@ AutowiredAnnotationBeanPostProcessor :解析完成自动装配
 @Value(“”) 基本数值，可以写SpEL：(#{20-1}), &{} 配置文件 ， 可以加在变量上，也可以加在参数上
 @PropertySource(value={})放在类上面 读取配置文件 ，还有applicationContext.getProperty，还有implements 
 EmbeddedValueResolverAware用valueResolver.resolveString(“&{}”)
-DI 方式 @AutoWired (required=false)就非必须加载 ，spring定义的
+
+3. DI 方式 @AutoWired (required=false)就非必须加载 ，spring定义的
 3.1默认优先 按照类型去找
 3.2如果找到多个，再将属性名称作为组件id去容器中查找
 3.3 @Qualifier(“”) 指定组件id
@@ -165,7 +166,25 @@ AnnotationAwareAspectJAutoProxyCreator 是一个后置处理器
 5.2.2         利用拦截器的链式机制，依次进入每一个拦截器执行
 5.2.3         前置通知=》目标通知=》后置通知=》返回通知
 5.2.4         前置通知=》目标通知=》后置通知=》异常通知
+```
+例如定义切入点表达式  execution (* com.sample.service.impl..*.*(..))
 
+execution()是最常用的切点函数，其语法如下所示：
+
+ 整个表达式可以分为五个部分：
+
+ 1、execution(): 表达式主体。
+
+ 2、第一个*号：表示返回类型，*号表示所有的类型。
+
+ 3、包名：表示需要拦截的包名，后面的两个句点表示当前包和当前包的所有子包，com.sample.service.impl包、子孙包下所有类的方法。
+
+ 4、第二个*号：表示类名，*号表示所有的类。
+
+ 5、*(..):最后这个星号表示方法名，*号表示所有的方法，后面括弧里面表示方法的参数，两个句点表示任何参数。
+
+
+```
 
 # Spring 事务
 方法上加@Transactional
@@ -214,7 +233,12 @@ ApplicationListener: 监听容器发布事件，事件驱动模型
 3. XID : 每一个事务都分配一个特定的XID
 - JTA是如何实现多数据源的事务管理呢?
 主要的原理是两阶段提交,以上面的请求业务为例,当整个业务完成了之后只是第一阶段提交,在第二阶段提交之前会检查其他所有事务是否已经提交,如果前面出现了错误或是没有提交,那么第二阶段就不会提交,而是直接rollback操作,这样所有的事务都会做Rollback操作.
-很多开发人员都会对 JTA 的内部工作机制感兴趣：我编写的代码没有任何与事务资源（如数据库连接）互动的代码，但是我的操作（数据库更新）却实实在在的被包含在了事务中，那 JTA 究竟是通过何种方式来实现这种透明性的呢？ 要理解 JTA 的实现原理首先需要了解其架构：它包括事务管理器（Transaction Manager）和一个或多个支持 XA 协议的资源管理器 ( Resource Manager ) 两部分， 我们可以将资源管理器看做任意类型的持久化数据存储；事务管理器则承担着所有事务参与单元的协调与控制。 根据所面向对象的不同，我们可以将 JTA 的事务管理器和资源管理器理解为两个方面：面向开发人员的使用接口（事务管理器）和面向服务提供商的实现接口（资源管理器）。其中开发接口的主要部分即为上述示例中引用的 UserTransaction 对象，开发人员通过此接口在信息系统中实现分布式事务；而实现接口则用来规范提供商（如数据库连接提供商）所提供的事务服务，它约定了事务的资源管理功能，使得 JTA 可以在异构事务资源之间执行协同沟通。以数据库为例，IBM 公司提供了实现分布式事务的数据库驱动程序，Oracle 也提供了实现分布式事务的数据库驱动程序， 在同时使用 DB2 和 Oracle 两种数据库连接时， JTA 即可以根据约定的接口协调者两种事务资源从而实现分布式事务。正是基于统一规范的不同实现使得 JTA 可以协调与控制不同数据库或者 JMS 厂商的事务资源，其架构如下图所示：
+很多开发人员都会对 JTA 的内部工作机制感兴趣：我编写的代码没有任何与事务资源（如数据库连接）互动的代码，但是我的操作（数据库更新）却实实在在的被包含在了事务中，那 JTA 究竟是通过何种方式来实现这种透明性的呢？ 
+要理解 JTA 的实现原理首先需要了解其架构：它包括事务管理器（Transaction Manager）和一个或多个支持 XA 协议的资源管理器 ( Resource Manager ) 两部分， 我们可以将资源管理器看做任意类型的持久化数据存储；
+事务管理器则承担着所有事务参与单元的协调与控制。 根据所面向对象的不同，我们可以将 JTA 的事务管理器和资源管理器理解为两个方面：面向开发人员的使用接口（事务管理器）和面向服务提供商的实现接口（资源管理器）。
+其中开发接口的主要部分即为上述示例中引用的 UserTransaction 对象，开发人员通过此接口在信息系统中实现分布式事务；而实现接口则用来规范提供商（如数据库连接提供商）所提供的事务服务，它约定了事务的资源管理功能，
+使得 JTA 可以在异构事务资源之间执行协同沟通。以数据库为例，IBM 公司提供了实现分布式事务的数据库驱动程序，Oracle 也提供了实现分布式事务的数据库驱动程序， 在同时使用 DB2 和 Oracle 两种数据库连接时， 
+JTA 即可以根据约定的接口协调者两种事务资源从而实现分布式事务。正是基于统一规范的不同实现使得 JTA 可以协调与控制不同数据库或者 JMS 厂商的事务资源，其架构如下图所示：
 
 Atomikos
 wrap datasource
@@ -445,3 +469,10 @@ Factorybean是个特殊的bean接口，里面有个getObject方法，实现Facto
 # 对象在spring中实例化
 - Classloader->register to BeanDefination(也可以实现BeanDefinationRegister就可以动态扩展加类，enableXXX都是加了Register)->Map（描述类）有接口可以改这个map(BeanFactoryPostProcessor)->singleton变成bean放在concurrentHashMap(IOC)->object
 - BeanDefinationRegister->FactoryBean->ioc
+
+# ThreadPoolTaskExecutor
+- 使用多线程，往往是创建Thread，或者是实现runnable接口，用到线程池的时候还需要创建Executors，spring中有十分优秀的支持，就是注解@EnableAsync就可以使用多线程，
+@Async加在线程任务的方法上（需要异步执行的任务），定义一个线程任务，通过spring提供的ThreadPoolTaskExecutor就可以使用线程池
+- ThreadPoolTaskExecutor是一个spring的线程池技术，其实，它的实现方式完全是使用ThreadPoolExecutor进行实现（有点类似于装饰者模式。当然Spring提供的功能更加强大些，因为还有定时调度功能）。
+
+

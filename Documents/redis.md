@@ -206,3 +206,5 @@ https://blog.csdn.net/zhuguang10/article/details/96136579
 如果 quorum >= majority，那么必须quorum数量的哨兵都授权才可以进行切换，比如5个哨兵，quorum是5，那么必须5个哨兵都同意授权，才可以进行切换。
 
 
+# 内存分析
+https://help.aliyun.com/knowledge_detail/50037.html?spm=5176.13394938.0.0.6e6d74e4dZjApe

@@ -21,15 +21,25 @@ Spring Boot是一套遵循的约定大于配置的体系，简化了很多组件
 - @EnableAutoConfiguration: 以前我们需要配置的东西，Spring Boot帮我们自动配置
 @AutoConfigurationPackage:自动装配包 @Import(AutoConfiguration.Register.class)
 1. 将主配置类的所在包及下面所有子包所有组建扫描到容器中
-2. 导入很多自动配置类（XXXAutoConfiguration）
-3. SpringBoot在启动时候从类路径下的Meta-Info/spring.factory中获取EnableAutoConfiguration指定的值，
+2. SpringBoot在启动时候从类路径下的Meta-Info/spring.factory中获取EnableAutoConfiguration指定的值，
 将这些值做为自动配置类导入到容器中，自动配置类就生效了，帮我们进行自动配置工作
-4. 每一个AutoConfiguration的类，都会有一个properity类，这个类里的属性就是我们在配置文件里绑定
-在application.properties里面开启debug debug=true 查看自动匹配报告
+3. 导入很多自动配置类（XXXAutoConfiguration）
+4. @Configuration,@ConditionalOnClass就是自动配置的核心，首先它得是一个配置文件，其次根据类路径下是否有这个类去自动配置。
+5. 每一个AutoConfiguration的类，都会有一个properity类，这个类里的属性就是我们在配置文件里绑定
+6. 在application.properties里面开启debug debug=true 查看自动匹配报告
+
+# Starters
+- Starters可以理解为启动器，它包含了一系列可以集成到应用里面的依赖包，你可以一站式集成Spring及其他技术，而不需要到处找示例代码和依赖包。如你想使用Spring JPA访问数据库，只要加入spring-boot-starter-data-jpa启动器依赖就能使用了。
+- Spring Boot官方的启动器都是以spring-boot-starter-命名的，代表了一个特定的应用类型。
+- Spring Boot应用类启动器 : spring-boot-starter-web	使用Spring MVC构建web 工程，包含restful，默认使用Tomcat容器。
+- Spring Boot生产启动器: spring-boot-starter-actuator	提供生产环境特性，能监控管理应用。
+- Spring Boot技术类启动器: spring-boot-starter-logging	默认的日志启动器，默认使用Logback。
 
 
 # Spring 文件配置
  配置文件：application.properties application.yml 配置文件名固定
+ bootstrap:使用 Spring Cloud Config 配置中心时，这时需要在 bootstrap 配置文件中添加连接到配置中心的配置属性来加载外部配置中心的配置信息；
+
  作用：用来改自动配置文件的默认值
  
  YAML是一个以数据为中心,比json和xml更适合做为配置文件
@@ -77,7 +87,10 @@ ConfigurationProperties 支持JSR303数据校验，@Value不支持
 ConfigurationProperties支持复杂类型封装
 
 5.2 @PropertySource+@Value 加载指定文件 ,@PropertySource不支持yml文件读取
+@PropertySource+@ConfigurationProperties注解读取方式
+
 ```
+@ConfigurationProperties(prefix = "db")
 @PropertySource(value = { "config/db-config.properties" })
 
 ```
@@ -86,6 +99,8 @@ ConfigurationProperties支持复杂类型封装
 ```
 @Autowired
 private Environment env;
+// 获取参数
+String getProperty(String key);
 
 ```
 
@@ -331,5 +346,18 @@ Spring boot actuator是spring启动框架中的重要功能之一。Spring boot�
     }
 
  ```
+
+
+# Jetty与tomcat
+1. 架构比较
+- Jetty的架构比Tomcat的更为简单
+- Jetty的架构是基于Handler来实现的，主要的扩展功能都可以用Handler来实现，扩展简单。
+- Tomcat的架构是基于容器设计的，进行扩展是需要了解Tomcat的整体设计结构，不易扩展。
+
+2.性能比较
+Jetty和Tomcat性能方面差异不大
+Jetty默认采用NIO结束在处理I/O请求上更占优势，在处理静态资源时，性能较高
+Tomcat默认采用BIO处理I/O请求，在处理静态资源时，性能较差。
+
 
 
