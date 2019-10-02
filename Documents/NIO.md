@@ -62,5 +62,6 @@ https://blog.csdn.net/baiye_xing/article/details/76735113
 3. NIO 通过Channel（通道） 进行读写。
 4. NIO有选择器，而IO没有。
 
+https://youzhixueyuan.com/netty-implementation-principle.html
 
 

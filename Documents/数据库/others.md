@@ -22,6 +22,9 @@ hash 分发，好处在于说，可以平均分配每个库的数据量和请求
 
 4. snowflake 算法  64 位的 long 型的 id
 1 bit符号位置+41bit时间戳+10bit工作机房机器id+12 bit这个是用来记录同一个毫秒内产生的不同 id
+应用举例Mongdb objectID
+MongoDB官方文档 ObjectID可以算作是和snowflake类似方法，通过“时间+机器码+pid+inc”共12个字节，通过4+3+2+3的方式最终标识成一个24长度的十六进制字符。
+
 
 # 分表分库方案
 1. 停机迁移方案

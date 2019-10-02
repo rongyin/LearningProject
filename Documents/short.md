@@ -29,9 +29,11 @@
 2. 请求过滤
 3. 高可用
 4. 聚合请求
+5. 跨域
 
 # Q2O
 1. 演变
+2. 拆分
 
 # spring boot
 1. spring boot的优点
@@ -52,3 +54,4 @@
 5. AOP原理，adviser,excution
 6. spring 事务 隔离级别，传播级别
 7. JTA
+
