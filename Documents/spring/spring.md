@@ -470,7 +470,7 @@ Factorybean是个特殊的bean接口，里面有个getObject方法，实现Facto
 - Classloader->register to BeanDefination(也可以实现BeanDefinationRegister就可以动态扩展加类，enableXXX都是加了Register)->Map（描述类）有接口可以改这个map(BeanFactoryPostProcessor)->singleton变成bean放在concurrentHashMap(IOC)->object
 - BeanDefinationRegister->FactoryBean->ioc
 
-# ThreadPoolTaskExecutor
+# ThreadPoolTaskExecutor和@Async，异步调用一般都用到了线程池
 - 使用多线程，往往是创建Thread，或者是实现runnable接口，用到线程池的时候还需要创建Executors，spring中有十分优秀的支持，就是注解@EnableAsync就可以使用多线程，
 @Async加在线程任务的方法上（需要异步执行的任务），定义一个线程任务，通过spring提供的ThreadPoolTaskExecutor就可以使用线程池
 - ThreadPoolTaskExecutor是一个spring的线程池技术，其实，它的实现方式完全是使用ThreadPoolExecutor进行实现（有点类似于装饰者模式。当然Spring提供的功能更加强大些，因为还有定时调度功能）。
