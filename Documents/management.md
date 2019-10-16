@@ -37,4 +37,8 @@ instead of trying to deliver it all at once near the end.
 
 ```
 
+Tech Data is one of the world’s largest technology distributors. 
+We help companies like HP, Apple, Cisco, Microsoft — and hundreds of others — 
+bring their products to market, and we offer a wide range of technical and business support services.
 
+reseller bridge to vendors

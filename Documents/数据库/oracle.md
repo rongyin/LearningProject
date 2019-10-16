@@ -288,7 +288,7 @@ insert into table (f1,f2) select f1,f2 from table2
 # 事务的特性
 ACID
 Atomicity : 要么都执行，要么都不执行
-Consisitency : 一个查询的结果必须和查询前一致
+Consistency : 一个查询的结果必须和查询前一致
 Isolation : 事务与事务之间隔离 ， 没有commit之前都不可见 ，可以通过V&transaction表里看到其他用户事务
 Durability : 一旦提交成功，不可逆 ，oracle主要靠redu日志，先记录在日志上，再写到硬盘上
 
@@ -351,7 +351,7 @@ Oracle通过Segment Advisor ,如果你想自行解决，可以查看index_stats�
 2. 逻辑分层 基础信息加业务
 3. 数据库表结构设计与拆分 oracle分区 500万条个区，物化视图，中间表
 4. 数据规则
-5. 预留字段
+5. 预留字段 
 6. 做一些合理的冗余
 
 # 物化view 是虚表，但是会物理存储

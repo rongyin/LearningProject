@@ -88,12 +88,13 @@ https://github.com/doocs/advanced-java/blob/master/docs/high-concurrency/redis-s
 # redis 主从复制的核心原理
 1. 当启动一个 slave node 的时候，它会发送一个 PSYNC 命令给 master node。
 
-2. 如果这是 slave node 初次连接到 master node，那么会触发一次 full resynchronization 全量复制。此时 master 会启动一个后台线程，开始生成一份 RDB 快照文件，同时还会将从客户端 client 新收到的所有写命令缓存在内存中。RDB 文件生成完毕后， master 会将这个 RDB 发送给 slave，slave 会先写入本地磁盘，然后再从本地磁盘加载到内存中，接着 master 会将内存中缓存的写命令发送到 slave，slave 也会同步这些数据。slave node 如果跟 master node 有网络故障，断开了连接，会自动重连，连接之后 master node 仅会复制给 slave 部分缺少的数据。
+2. 如果这是 slave node 初次连接到 master node，那么会触发一次 full resynchronization 全量复制。
+此时 master 会启动一个后台线程，开始生成一份 RDB 快照文件，同时还会将从客户端 client 新收到的所有写命令缓存在内存中。
+RDB 文件生成完毕后， master 会将这个 RDB 发送给 slave，slave 会先写入本地磁盘，然后再从本地磁盘加载到内存中，接着 master 会将内存中缓存的写命令发送到 slave，slave 也会同步这些数据。
+slave node 如果跟 master node 有网络故障，断开了连接，会自动重连，连接之后 master node 仅会复制给 slave 部分缺少的数据。
 
 3. 主从复制的断点续传
 
-# 过期 key 处理
-slave 不会过期 key，只会等待 master 过期 key。如果 master 过期了一个 key，或者通过 LRU 淘汰了一个 key，那么会模拟一条 del 命令发送给 slave。
 
 
 # 留言协议（Gossip）
@@ -106,13 +107,14 @@ slave 不会过期 key，只会等待 master 过期 key。如果 master 过期�
 因为Redis是基于内存的操作，CPU不是Redis的瓶颈，Redis的瓶颈最有可能是机器内存的大小或者网络带宽。既然单线程容易实现，而且CPU不会成为瓶颈，那就顺理成章地采用单线程的方案了。
 
 # Redis的高并发和快速原因
-1.redis是基于内存的，内存的读写速度非常快；
+1. redis是基于内存的，内存的读写速度非常快；
 
-2.redis是单线程的，省去了很多上下文切换线程的时间；
+2. redis是单线程的，省去了很多上下文切换线程的时间；
 
-3.redis使用多路复用技术，可以处理并发的连接。非阻塞IO 内部实现采用epoll，采用了epoll+自己实现的简单的事件框架。epoll中的读、写、关闭、连接都转化成了事件，然后利用epoll的多路复用特性，绝不在io上浪费一点时间。
+3. redis使用多路复用技术，可以处理并发的连接。非阻塞IO 内部实现采用epoll，采用了epoll+自己实现的简单的事件框架。epoll中的读、写、关闭、连接都转化成了事件，然后利用epoll的多路复用特性，绝不在io上浪费一点时间。
 
 4. c语言实现
+
 # Redis相比memcached有哪些优势？
 1. memcached所有的值均是简单的字符串，Redis作为其替代者，支持更为丰富的数据类型
 
@@ -163,6 +165,8 @@ redis淘汰数据时还会同步到aof
 
 # Redis过期策略
 https://www.cnblogs.com/xuliangxing/p/7151812.html
+过期 key 处理
+slave 不会过期 key，只会等待 master 过期 key。如果 master 过期了一个 key，或者通过 LRU 淘汰了一个 key，那么会模拟一条 del 命令发送给 slave。
 
 # 如何解决Redis缓存雪崩、缓存穿透、缓存并发等5大难题
 ## 缓存雪崩
@@ -216,7 +220,7 @@ https://blog.csdn.net/zhuguang10/article/details/96136579
 - redis高可用：如果你做主从架构部署，其实就是加上哨兵就可以了，就可以实现，任何一个实例宕机，自动会进行主备切换。
 
 # quorum和majority
-每次一个哨兵做主备切换，首先需要quorum数量的哨兵认为odown，然后选举出一个哨兵来做主备切换，这个哨兵还要得到majority数量哨兵的授权，才能正式执行切换。
+每次一个哨兵做主备切换，首先需要quorum数量的哨兵认为down，然后选举出一个哨兵来做主备切换，这个哨兵还要得到majority数量哨兵的授权，才能正式执行切换。
 
 如果quorum < majority ,比如5个哨兵，majority就是3(超过半数)，quorum设置为2，那么就需要3个哨兵授权就可以执行切换。
 
@@ -249,7 +253,7 @@ https://help.aliyun.com/knowledge_detail/50037.html?spm=5176.13394938.0.0.6e6d74
 如果应用非常平凡的创建和销毁Jedis对象,对应用的性能是很大影响的,因为构建Socket的通道是很耗时的(类似数据库连接)。我们应该使用连接池来减少Socket对象的创建和销毁过程。
 1. 配置JedisPoolConfig，注入jedisPool
 2. jedisPool.getResource
-3. Pipeline set get都是二进制
+3. Pipeline set gerct都是二进制
 4. google.protobuf
 protobuf序列化后的大小是json格式的十分之一，xml格式的二十分之一。如果使用protobuf实现，首先要写一个proto文件
 

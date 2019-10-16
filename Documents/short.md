@@ -51,7 +51,25 @@
 2. 3种容器注册组件 
 3. bean生命周期
 4. spring mvc
-5. AOP原理，adviser,excution
+5. IOC,AOP原理，adviser,excution
 6. spring 事务 隔离级别，传播级别
 7. JTA
+
+# Java
+1. lambda
+2. Stream
+
+# Jvm
+1. Jvm调优
+2. 内存分布
+
+# 多线程
+1. AQS
+2. 线程池
+3. sychronized
+
+# 数据库
+1. ArrayList
+2. HashMap/ConcurrentHashMap
+3. BlockingQueue
 

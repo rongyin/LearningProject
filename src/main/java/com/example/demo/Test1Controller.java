@@ -73,7 +73,6 @@ public class Test1Controller {
 
     @RequestMapping("/success")
     public String success(Map<String,String> obj){
-
         obj.put("hello","yech");
         return "success";
     }

@@ -11,7 +11,7 @@
 2. 线程返回值方法
 - 主main循环
 - 利用callable接口实现： futuretask，线程池
-- Thrad join可以阻塞当前Thread等待子线程完成
+- Thread join可以阻塞当前Thread等待子线程完成
  
 - Futuretask是implements runnable and future
 - 等待池WaitSet，锁池LockEntry
@@ -48,8 +48,10 @@ ScheduleExecutorService:支持future和定期任务
 * When a new task is submitted in method and fewer than corePoolSize threads are running a new thread is created to handle the request, even if other worker threads are idle.Most typically, core and maximum pool sizes are set only upon construction, but they may also be changed dynamically using {@link #setCorePoolSize} and {@link #setMaximumPoolSize}.
 * corePoolSize; corePoolSize 和max相等就是fixed
 * maximunPoolsize(小于这个时候，大于coolPool ，当wrokquque满了才新增，如果超过max并且workquque满了，则交给handler处理), handler默认是直接抛出异常，还有用户自定义Policy，还有discardPolicy，discardoldestpolicy
+https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485679&idx=1&sn=57dbca8c9ad49e1f3968ecff04a4f735&chksm=cea24724f9d5ce3212292fac291234a760c99c0960b5430d714269efe33554730b5f71208582&mpshare=1&scene=23&srcid&sharer_sharetime=1571113526905&sharer_shareid=b72c5e5d68cc3a21303b060523ad0aa7%23rd
 * workQueue
  - There are three general strategies for queuing:
+ https://blog.csdn.net/ThinkWon/article/details/102508901
    1. Direct handoffs. A good default choice for a work queue is a {@link SynchronousQueue} that hands off tasks to threads without otherwise holding them.Here, an attempt to queue a task will fail if no threads are immediately available to run it, so a new thread will be constructed. This policy avoids lockups when handling sets of requests that might have internal dependencies.Direct handoffs generally require unbounded maximumPoolSizes to avoid rejection of new submitted tasks. This in turn admits the possibility of unbounded thread growth when commands continue to arrive on average faster than they can be processed. 
    2. Unbounded queues.(LinkedBlockingQueue) without a predefined capacity) will cause new tasks to wait in the queue when all corePoolSize threads are busy
    3. Bounded queues. (ArrayBlockingQueue) Queue sizes and maximum pool sizes may be traded off for each other: Using large queues and small pools minimizes CPU usage, OS resources, and context-switching overhead but can lead to artificially low throughput.Use of small queues generally requires larger pool sizes, which keeps CPUs busier but may encounter unacceptable scheduling overhead, which also decreases throughput. 
@@ -64,7 +66,7 @@ ScheduleExecutorService:支持future和定期任务
 - stop：不接受新任务，也不处理队列任务 shutdownnow方法
 - tiding：所有任务中止了 workqueue为空
 - terminated：terminated();
-- start -> excute -> add worker -> create new worker thread -> add worker to queue if excess the corepoolsize -> run woker ->  acquire task -> commit task ->done
+- start -> excute -> add worker to HashSet -> create new worker thread -> add worker to queue if excess the corepoolsize -> run woker ->  acquire task -> commit task ->done
  https://juejin.im/post/5b3cf259e51d45194e0b7204
  https://www.jianshu.com/p/6c6f396fc88e
  https://www.jianshu.com/p/5df6e38e4362
@@ -76,11 +78,6 @@ https://www.liangzl.com/get-article-detail-125814.html
 13. AQS
 https://github.com/rongyin/JavaGuide/blob/master/docs/java/Multithread/AQS.md
 https://juejin.im/post/5aeb07ab6fb9a07ac36350c8#heading-0
-以ReentrantLock为例，state初始化为0，表示未锁定状态。A线程lock()时，会调用tryAcquire()独占该锁并将state+1。此后，其他线程再tryAcquire()时就会失败，直到A线程unlock()到state=0（即释放锁）为止，其它线程才有机会获取该锁。当然，释放锁之前，A线程自己是可以重复获取此锁的（state会累加），这就是可重入的概念。但要注意，获取多少次就要释放多么次，这样才能保证state是能回到零态的。
+一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现tryAcquire-tryRelease、tryAcquireShared-tryReleaseShared中的一种即可。
+但AQS也支持自定义同步器同时实现独占和共享两种方式，如ReentrantReadWriteLock。
 
-　　再以CountDownLatch以例，任务分为N个子线程去执行，state也初始化为N（注意N要与线程个数一致）。这N个子线程是并行执行的，每个子线程执行完后countDown()一次，state会CAS减1。等到所有子线程都执行完后(即state=0)，会unpark()主调用线程，然后主调用线程就会从await()函数返回，继续后余动作。
-
-　　一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现tryAcquire-tryRelease、tryAcquireShared-tryReleaseShared中的一种即可。但AQS也支持自定义同步器同时实现独占和共享两种方式，如ReentrantReadWriteLock。
-
-
-14. countdownlatch ,CyclicBarrier, semaphore

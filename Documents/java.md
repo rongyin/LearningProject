@@ -110,9 +110,24 @@ Constructor ：可以用 Constructor 创建新的对象。
 
 
 
+# finally
+1.不管有没有出现异常，finally块中的代码都会执行；
+2.当try和catch中有return时，finally仍然会执行；
+
+3.执行try 或者catch中的return语句之前，都会先执行finally语句。(此时并没有返回运算后的值，而是先把要返回的值保存起来，不管finally中的代码怎么样，返回的值都不会改变，仍然是之前保存的值)，所以函数返回值是在finally执行前确定的；
+
+4.finally中最好不要包含return，否则程序会提前退出，返回值不是try或catch中保存的返回值。
+编译器把finally中的return实现为一个warning。
 
 
+# 基本类型和包装类型的区别
+1. 包装类型可以为 null，而基本类型不可以
+2. 包装类型可用于泛型，而基本类型不可以
+3. 基本类型比包装类型更高效
+4. 自动装箱和自动拆箱
 
+# lombok
+https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485385&idx=2&sn=a7c3fb4485ffd8c019e5541e9b1580cd&chksm=cea24802f9d5c1144eee0da52cfc0cc5e8ee3590990de3bb642df4d4b2a8cd07f12dd54947b9&token=913106598&lang=zh_CN&scene=21#wechat_redirect
 
 
 

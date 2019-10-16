@@ -13,7 +13,8 @@
 - Production-Ready: 健康检查，数据指标，@EndPoint 管控
 
 # spring boot和spring mvc
-Spring Boot是一套遵循的约定大于配置的体系，简化了很多组件的使用比如datasouce、JPA、SpringMVC等等，约定好自动化的配置，就可以使用功能。使用的技术还是Spring体系的，Spring mvc在其中也有使用。同时SpringBoot有各种starter，包含了当前功能必须的各种Maven依赖，简化了依赖冲突的管理问题。本质来说就是个常用开发框架整合包，类似与项目开始开发拿到的初始可运行框架。
+Spring Boot是一套遵循的约定大于配置的体系，简化了很多组件的使用比如datasouce、JPA、SpringMVC等等，约定好自动化的配置，就可以使用功能。使用的技术还是Spring体系的，
+Spring mvc在其中也有使用。同时SpringBoot有各种starter，包含了当前功能必须的各种Maven依赖，简化了依赖冲突的管理问题。本质来说就是个常用开发框架整合包，类似与项目开始开发拿到的初始可运行框架。
 
 
 # @SpringBootApplication 自动配置原理
@@ -316,7 +317,9 @@ ctrl + shift + a + / > Registry > 勾选Compiler autoMake allow when app running
 
 
 # Spring Boot中的监视器是什么？
-Spring boot actuator是spring启动框架中的重要功能之一。Spring boot监视器可帮助您访问生产环境中正在运行的应用程序的当前状态。有几个指标必须在生产环境中进行检查和监控。即使一些外部应用程序可能正在使用这些服务来向相关人员触发警报消息。监视器模块公开了一组可直接作为HTTP URL访问的REST端点来检查状态。
+Spring boot actuator是spring启动框架中的重要功能之一。Spring boot监视器可帮助您访问生产环境中正在运行的应用程序的当前状态。
+有几个指标必须在生产环境中进行检查和监控。即使一些外部应用程序可能正在使用这些服务来向相关人员触发警报消息。
+监视器模块公开了一组可直接作为HTTP URL访问的REST端点来检查状态。
 
 
 
@@ -360,4 +363,67 @@ Jetty默认采用NIO结束在处理I/O请求上更占优势，在处理静态资
 Tomcat默认采用BIO处理I/O请求，在处理静态资源时，性能较差。
 
 
+# junit整合
+1. starter加上test
+1. 在src/test/java下编写测试类
+2. 加上@runwith注解，表示启动器,SpringJUnit4ClassRunner表示和boot整合
+3. 加上@SpringBootTest,表示当前类是测试类，加载springboot启动类启动springboot
+```
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {App.class})
+@TestPropertySource( // 对属性进行设置
+        properties = {"bar=uvw"},
+        locations = "classpath:test-property-source.yml"
+)
+public class TestUserService {
 
+```
+4. @TestConfiguration是Spring Boot Test提供的一种工具，用它我们可以在一般的@Configuration之外补充测试专门用的Bean或者自定义的配置。
+由于@SpringBootApplication已经添加有排除TypeExcludeFilter的功能，固使用@SpringBootApplication时不会加载@TestComponent声明的bean:
+
+
+# jpa
+@EnableJpaRepositories("com.hrs.crsng.base.atour")
+@EnableJpaAuditing
+
+@Temporal
+在进行实体映射时，有关时间日期类型的类型可以是java.sql包下的java.sql.Date、java.sql.Time 和java.sql.Timestamp，
+还有java.util包下的java.util.Date 和 java.util.Calendar类型。默认情况下，实体中使用的数据类型是java.sql包下的类，
+但此时如果要使用java.util包中的时间日期类型，则需要而外标注@Temporal注释来说明转化成java.util包中的类型。
+
+@EntityListeners(AuditingEntityListener.class)
+这是一个JPA Entity Listener，用于捕获监听信息，当Entity发生持久化和更新操作时。
+
+@Enumerated(EnumType.STRING)
+
+@CreatedDate
+@LastModifiedDate
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+@Id：表示该属性为主键。
+@GeneratedValue(strategy = GenerationType.SEQUENCE,generator = “repair_seq”)：表示主键生成策略是sequence（可以为Auto、IDENTITY、native等，Auto表示可在多个数据库间切换），指定sequence的名字是repair_seq。
+@CreatedBy
+@LastModifiedBy
+@NoRepositoryBean:一般用作父类的repository，有这个注解，spring不会去实例化该repository。
+
+@Transient：表示该属性并非一个到数据库表的字段的映射,ORM框架将忽略该属性。如果一个属性并非数据库表的字段映射,就务必将其标示为@Transient,否则,ORM框架默认其注解为@Basic。@Basic(fetch=FetchType.LAZY)：标记可以指定实体属性的加载方式
+
+# MockMVC
+MockMvc 由org.springframework.boot.test包提供，实现了对Http请求的模拟，一般用于我们测试 controller 层。
+```
+@AutoConfigureMockMvc
+@SpringBootTest
+public class ExceptionTest {
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    void should_return_400_if_param_not_valid() throws Exception {
+        mockMvc.perform(get("/api/illegalArgumentException"))
+                .andExpect(status().is(400))
+                .andExpect(jsonPath("$.message").value("参数错误!"));
+    }
+
+```

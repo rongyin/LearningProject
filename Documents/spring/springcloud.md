@@ -6,7 +6,7 @@ Martin Fowler提出来这一概念可以说把SOA的理念继续升华，精进�
 从部署方式上，这个是最大的不同，对比以往的Java
 EE部署架构，通过展现层打包WARs，业务层划分到JARs最后部署为EAR一个大包，而微服务则把应用拆分成为一个一个的单个服务，应用Docker技术，不依赖任何服务器和数据模型，是一个
 全栈应用，可以通过自动化方式独立部署，每个服务运行在自己的进程。
-
+https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485613&idx=1&sn=29af9be51654779b54f73315b3ba2c64&chksm=cea24766f9d5ce7011233f3a0634b608e41cc6bc5a0a0afe836ad57efe08f7a4bb9c5495fc85&token=287192206&lang=zh_CN&scene=21#wechat_redirect
 
 - 单体应用->分布式系统
 - 根据业务拆分服务，彻底去耦合
@@ -38,8 +38,10 @@ Netflix的Archaius,阿里的Diamond
 # 服务的注册和管理
 
 ## why
-在传统的服务架构中，服务的规模处于运维人员的可控范围内。当部署服务的多个节点时，一般使用静态配置的方式实现服务信息的设定。而在微服务应用中，服务实例的数量和网络地址都是动态变化的，这对系统运维提出了巨大的挑战。
-而且服务集群的跨度很大、数量很多（数以百计甚至更多），为保障系统的正常运行，必然需要有一个中心化的组件完成对各个服务的整合，即将分散于各处的服务进行汇总，汇总的信息可以是服务器的名称、地址、数量等，并且这些服务器组件还拥有被监听功能等(服务发现)。
+在传统的服务架构中，服务的规模处于运维人员的可控范围内。当部署服务的多个节点时，一般使用静态配置的方式实现服务信息的设定。
+而在微服务应用中，服务实例的数量和网络地址都是动态变化的，这对系统运维提出了巨大的挑战。
+而且服务集群的跨度很大、数量很多（数以百计甚至更多），为保障系统的正常运行，必然需要有一个中心化的组件完成对各个服务的整合，
+即将分散于各处的服务进行汇总，汇总的信息可以是服务器的名称、地址、数量等，并且这些服务器组件还拥有被监听功能等(服务发现)。
 
 1. 服务注册
 服务实例将自身服务信息注册到注册中心。这部分服务信息包括服务所在主机IP和提供服务的Port，以及暴露服务自身状态以及访问协议等信息。
@@ -61,7 +63,7 @@ Eureka从属于服务的每个实例接收心跳消息。如果心跳失败超�
 3. 服务注册表：用来记录微服务信息
 4. 服务的注册与发现，通过心跳检查，客户端缓存等机制，提高系统的灵活，可伸缩和可用性
 5. 服务状态：UP，Unknown(一般是因为健康检查导致的，配置在bootstrap.yml中有时会有问题)，Down
-6. Eureka Server提供了服务发现的能力，各个微服务启动时，会向server注册自己信息，server会存储这些信息
+6. Eureka Server提供了服务发现的能力，各个微服务启动时， ，server会存储这些信息
 7. 微服务启动会周期性（默认30秒）向server发送心跳以续约自己的租期
 8. server 在一定时间没有接受到某个微服务实例的心跳，将其注销（90秒默认），多个server实例之间通过复制方式来同步数据
 9. client会缓存注册表的信息，微服务无需每次请求查询server，降低server压力，即使server所有节点都down了，也可以使用缓存信息找到服务提供者完成调用
@@ -109,7 +111,7 @@ Ribbon工作时分为两步,第一步先选择Eureka Server，它优先选择在
 - WeightedResponseTimeRule
 WeightedResponseTimeRule是RoundRobinRule的一个子类，在WeightedResponseTimeRule中对RoundRobinRule的功能进行了扩展，WeightedResponseTimeRule中会根据每一个实例的运行情况来给计算出该实例的一个权重，然后在挑选实例的时候则根据权重进行挑选，这样能够实现更优的实例调用。WeightedResponseTimeRule中有一个名叫DynamicServerWeightTask的定时任务，默认情况下每隔30秒会计算一次各个服务实例的权重，权重的计算规则也很简单，如果一个服务的平均响应时间越短则权重越大，那么该服务实例被选中执行任务的概率也就越大。
 ```
-@RibbonClients(defaultConfiguration = RibbonCOnfiguration.class)
+@RibbonClients(defaultConfiguration = RibbonConfiguration.class)
 
 /**
  * 
@@ -152,7 +154,7 @@ public class RibbonConfiguration {
 	 * 
 	 * AvailabilityFilteringRule | 过滤掉那些因为一直连接失败的被标记为circuit tripped的后端server，并过滤掉那些高并发的的后端server（active connections 超过配置的阈值） | 使用一个AvailabilityPredicate来包含过滤server的逻辑，其实就就是检查status里记录的各个server的运行状态
 	 * RandomRule  | 随机选择一个server
-	 * BestAvailabl eRule | 选择一个最小的并发请求的server | 逐个考察Server，如果Server被tripped了，则忽略，在选择其中
+	 * BestAvailableRule | 选择一个最小的并发请求的server | 逐个考察Server，如果Server被tripped了，则忽略，在选择其中
 	 * RoundRobinRule  |  roundRobin方式轮询选择  |  轮询index，选择index对应位置的server
 	 * WeightedResponseTimeRule  |  根据响应时间分配一个weight，响应时间越长，weight越小，被选中的可能性越低。  |  一 个后台线程定期的从status里面读取评价响应时间，为每个server计算一个weight。Weight的计算也比较简单responsetime 减去每个server自己平均的responsetime是server的权重。当刚开始运行，没有形成statas时，使用roubine策略选择 server。
 	 * RetryRule  |  对选定的负载均衡策略机上重试机制。 |  在一个配置时间段内当选择server不成功，则一直尝试使用subRule的方式选择一个可用的server
@@ -302,7 +304,7 @@ ignoredHeaders: X-ABC
 Rest，RPC， gRPC
 
 # 服务器的熔断器
-- 如何熔断：断路器（打开，半打开，关闭，threadhold）
+- 如何熔断：断路器（打开，半打开，关闭，fa）
 正常情况关闭，当失败数量到一定的threadshold就会打开，打开一段时间会进入半开，此时允许一个请求访问，如果成功就关闭断路器
 (Hystrix中的默认值为5秒内的20次故障）
 - 断路器功能：异常处理，日志记录，测试失败操作，手动复位，并发，重试失败请求
@@ -310,7 +312,7 @@ Rest，RPC， gRPC
  * 熔断的目的是当A服务模块中的某块程序出现故障后为了不影响其他客户端的请求而做出的及时回应。
  * 降级的目的是为了解决整体项目的压力，而牺牲掉某一服务模块而采取的措施。
 1. 目的很一致，都是从可用性可靠性着想，为防止系统的整体缓慢甚至崩溃，采用的技术手段；
-2. 最终表现类似，对于两者来说，最终让用户体验到的是某些功能暂时不可达或不可用；
+2. 最终表现类似，对于两者来说，最终让用户体验e到的是某些功能暂时不可达或不可用；
 3. 粒度一般都是服务级别，当然，业界也有不少更细粒度的做法，比如做到数据持久层（允许查询，不允许增删改）；
 1. 触发原因不太一样，服务熔断一般是某个服务（下游服务）故障引起，而服务降级一般是从整体负荷考虑；
 2. 管理目标的层次不太一样，熔断其实是一个框架级的处理，每个微服务都需要（无层级之分），而降级一般需要对业务有层级之分（比如降级一般是从最外围服务开始）
@@ -330,7 +332,7 @@ Rest，RPC， gRPC
 1. 在fallback方法里加上Throwable的参数
 2. 在自定义fallbackFactory,覆盖create方法，create方法参数是Throwable
 - 缓存
-1. 如果我们使用了自定义Hystrix请求命令的方式来使用Hystrix，那么我们只需要重写getCacheKey方法即可实现请求缓存，如下：
+1. 如果我们使用了自定义Hystrix请求命令的方式来使用Hystrix，c，如下：
 ```
 public class BookCommand extends HystrixCommand<Book> {
 

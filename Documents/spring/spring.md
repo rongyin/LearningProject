@@ -132,59 +132,6 @@ this.singletonObjects.put(beanName, singletonObject);
               }
        }
 ```
-# AOP 【动态代理】： 指在程序运行期间动态的将某段代码切入到指定方法指定位置进行的编程方式
-导入aop-aspect
-Aspect的5种通知（Advisor）
-前置通知：@Before
-后置通知：@After 无论方法正常还是异常结束
-返回通知：@AfterReturning
-异常通知：@AfterThrowing
-环绕通知：@Around
-切入表达式可以加
-After(“com.cn.Class.*(..)”)
-@Pointcut(“execution()”)
-Public void pointcut(){}
-After(“pointcut()”)
-@Aspect 放在aspect类上
- 
-@EnableAspectJAutoProxy(proxyTargetClass=true) 在config上
-自己创建类不行，必须是容器中的
-JDK Dynamic proxy can only proxy by interface (so your target class needs to implement an interface, which is then also implemented by the proxy class).
-CGLIB (and javassist) can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
-So Java Dynamic proxies can proxy: public class Foo implements iFoo where CGLIB can proxy: public class Foo
-
-EnableAspectJAutoProxy 开启AOP功能
-EnableAspectJAutoProxy 会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
-AnnotationAwareAspectJAutoProxyCreator 是一个后置处理器
-容器创建流程
-4.1   refresh()->registerBeanPostProcessors() 注册后置处理器,创建AnnotationAwareAspectJAutoProxyCreator
-4.2   finishBeanFactoryInitialization() 初始化剩下的单实例bean，创建业务逻辑组件和切面组件，AnnotationAwareAspectJAutoProxyCreator拦截组件的创建过程，组件创建完成之后判断组件是否需要增强，是的话，切面的通知方法就要包装成增强器（advisor）给业务逻辑组件创建代理对象（cglib）
-执行目标方法：
-5.1   代理对象执行目标方法
-5.2   CglibAopProxy.intercept()
-5.2.1         得到目标方法的拦截器链
-5.2.2         利用拦截器的链式机制，依次进入每一个拦截器执行
-5.2.3         前置通知=》目标通知=》后置通知=》返回通知
-5.2.4         前置通知=》目标通知=》后置通知=》异常通知
-```
-例如定义切入点表达式  execution (* com.sample.service.impl..*.*(..))
-
-execution()是最常用的切点函数，其语法如下所示：
-
- 整个表达式可以分为五个部分：
-
- 1、execution(): 表达式主体。
-
- 2、第一个*号：表示返回类型，*号表示所有的类型。
-
- 3、包名：表示需要拦截的包名，后面的两个句点表示当前包和当前包的所有子包，com.sample.service.impl包、子孙包下所有类的方法。
-
- 4、第二个*号：表示类名，*号表示所有的类。
-
- 5、*(..):最后这个星号表示方法名，*号表示所有的方法，后面括弧里面表示方法的参数，两个句点表示任何参数。
-
-
-```
 
 # Spring 事务
 方法上加@Transactional
@@ -248,31 +195,6 @@ JTA的特点
 2.    事务时间太长,锁数据太长
 3.    低性能,低吞吐量
 
-
- 
- 
-# Spring 创建刷新：
-1. 预处理：记录状态，检验属性
-2. 获取Bean工厂，添加部分BeanPostProcessor
-3. BeanFactory 准备，添加ResourceLoader，AspectJ。。。
-4. 执行BeanPostProcessors
-5. 注册Bean的后置处理器
-6. 初始化MessageSource（做国际化，消息绑定，消息解析）取出国家化配置文件中某个key值按照locale
-7. 判断是否FactoryBean实现的Bean，不是再检查缓存中是否有这个bean，获取不到就开始创建bean流程开始
-获取Bean的定义信息，获取当前bean依赖的其他bean，如果有把依赖bean创建
-创建bean实例 ->利用工厂方法或者对象构造器创建->populateBean(InstantiationAwareBeanPostProcessor)->应用Bean属性的值，为属性利用setter赋值) ->beannameaware\factoryawre ->执行所有BeanPostProcessor的postProcessBeforeInitializtion->
-执行初始化方法（实现了InitiliazingBean or @initMethod）->执行所有BeanPostProcessor的postProcessAfterInitializtion ->注册销毁方法（是否实现DisposableBean,@destroyMethod）->addSingleton->完成BeanFactory的初始化创建工作，IOC容器创建完成
-总结：
-Spring容器在启动时候，先会保存所有注册进来bean的信息：
-xml注册的，<bean>
-@Service…
-Spring 容器会合适的时机创建这些bean
-后置处理器，每个bean创建完成后都会使用各种后置处理器，来增强bean
-不如说使用AutowiredAnnotationBeanPostProcessor处理自动注入
-AnnotationAwareAspectJAutoProxyCreator:来做AOP功能
-时间驱动模型
-ApplicationListner:事件监听
-ApplicationEventMulticaster:事件派发
 
 # @PathVariable和@RequestParam，@RequestBody
 @PathVariable绑定URI模板变量值
@@ -352,7 +274,7 @@ public Account addAccount(@RequestParam String number) {
 
 # Spring MVC
 1. In a Servlet 3.0+ environment,implements WebApplicationInitializer and override the method onStartup
-WebApplicationInitializer is an interface provided by Spring MVC that ensures your implementation is detected and automatically used to initialize any Servlet 3 containe
+WebApplicationInitializer is an interface provided by Spring MVC that ensures your implementation is detected and automatically used to initialize any Servlet 3 container
 2. For many applications, having a single WebApplicationContext is simple and suffices. . 
 It is also possible to have a context hierarchy where one root WebApplicationContext is shared across multiple DispatcherServlet
 ```
@@ -452,14 +374,88 @@ spring webpplicationinitializer 的onstart
 # @RestController = @Controller+@ResponsibleBoby
 
 # IOC
-总结：IoC容器的初始化过程就是将xml配置资源的信息抽象到BeanDefinition信息对象中，再将BeanDefinition设置到基本容器的map中，BeanDefinition中的信息是容器建立依赖反转的基础，IoC容器的作用就是对这些信息进行处理和维护。
+总结：IoC容器的初始化过程就是将xml配置资源的信息抽象到BeanDefinition信息对象中，再将BeanDefinition设置到基本容器的map中，
+BeanDefinition中的信息是容器建立依赖反转的基础，IoC容器的作用就是对这些信息进行处理和维护。
 
 https://www.jianshu.com/p/ec166b79a75a
+# Spring 创建刷新：
+1. 预处理：记录状态，检验属性
+2. 获取Bean工厂，添加部分BeanPostProcessor
+3. BeanFactory 准备，添加ResourceLoader，AspectJ。。。
+4. 执行BeanPostProcessors
+5. 注册Bean的后置处理器
+6. 初始化MessageSource（做国际化，消息绑定，消息解析）取出国家化配置文件中某个key值按照locale
+7. 判断是否FactoryBean实现的Bean，不是再检查缓存中是否有这个bean，获取不到就开始创建bean流程开始
+获取Bean的定义信息，获取当前bean依赖的其他bean，如果有把依赖bean创建
+创建bean实例 ->利用工厂方法或者对象构造器创建->populateBean(InstantiationAwareBeanPostProcessor)->应用Bean属性的值，为属性利用setter赋值) ->beannameaware\factoryawre ->执行所有BeanPostProcessor的postProcessBeforeInitializtion->
+执行初始化方法（实现了InitiliazingBean or @initMethod）->执行所有BeanPostProcessor的postProcessAfterInitializtion ->注册销毁方法（是否实现DisposableBean,@destroyMethod）->addSingleton->完成BeanFactory的初始化创建工作，IOC容器创建完成
+总结：
+Spring容器在启动时候，先会保存所有注册进来bean的信息：
+xml注册的，<bean> @Service…
+Spring 容器会合适的时机创建这些bean
+后置处理器，每个bean创建完成后都会使用各种后置处理器，来增强bean
+比如说使用AutowiredAnnotationBeanPostProcessor处理自动注入
+AnnotationAwareAspectJAutoProxyCreator:来做AOP功能
+时间驱动模型
+ApplicationListner:事件监听
+ApplicationEventMulticaster:事件派发
 
-# Aop
+# AOP 【动态代理】： 指在程序运行期间动态的将某段代码切入到指定方法指定位置进行的编程方式
 - JdkDynamicAopProxy就是以动态代理的方式构建代理对象返回(具体动态代理原理自行了解哦)。
-
 - CglibAopProxy就是以Cglib的方式进行代理，Cglib采用了非常底层的字节码技术，其原理是通过字节码技术为一个类创建子类，并在子类中采用方法拦截的技术拦截所有父类方法的调用，顺势织入横切逻辑。具体细节超出这文章的范围拉。
+导入aop-aspect
+Aspect的5种通知（Advisor）
+前置通知：@Before
+后置通知：@After 无论方法正常还是异常结束
+返回通知：@AfterReturning
+异常通知：@AfterThrowing
+环绕通知：@Around
+切入表达式可以加
+After(“com.cn.Class.*(..)”)
+@Pointcut(“execution()”)
+Public void pointcut(){}
+After(“pointcut()”)
+@Aspect 放在aspect类上
+ 
+@EnableAspectJAutoProxy(proxyTargetClass=true) 在config上
+自己创建类不行，必须是容器中的
+JDK Dynamic proxy can only proxy by interface (so your target class needs to implement an interface, which is then also implemented by the proxy class).
+CGLIB (and javassist) can create a proxy by subclassing. In this scenario the proxy becomes a subclass of the target class. No need for interfaces.
+So Java Dynamic proxies can proxy: public class Foo implements iFoo where CGLIB can proxy: public class Foo
+
+EnableAspectJAutoProxy 开启AOP功能
+EnableAspectJAutoProxy 会给容器注册一个组件AnnotationAwareAspectJAutoProxyCreator
+AnnotationAwareAspectJAutoProxyCreator 是一个后置处理器
+容器创建流程
+4.1   refresh()->registerBeanPostProcessors() 注册后置处理器,创建AnnotationAwareAspectJAutoProxyCreator
+4.2   finishBeanFactoryInitialization() 初始化剩下的单实例bean，创建业务逻辑组件和切面组件，AnnotationAwareAspectJAutoProxyCreator拦截组件的创建过程，
+组件创建完成之后判断组件是否需要增强，是的话，切面的通知方法就要包装成增强器（advisor）给业务逻辑组件创建代理对象（cglib）
+执行目标方法：
+5.1   代理对象执行目标方法
+5.2   CglibAopProxy.intercept()
+5.2.1         得到目标方法的拦截器链
+5.2.2         利用拦截器的链式机制，依次进入每一个拦截器执行
+5.2.3         前置通知=》目标通知=》后置通知=》返回通知
+5.2.4         前置通知=》目标通知=》后置通知=》异常通知
+```
+例如定义切入点表达式  execution (* com.sample.service.impl..*.*(..))
+
+execution()是最常用的切点函数，其语法如下所示：
+
+ 整个表达式可以分为五个部分：
+
+ 1、execution(): 表达式主体。
+
+ 2、第一个*号：表示返回类型，*号表示所有的类型。
+
+ 3、包名：表示需要拦截的包名，后面的两个句点表示当前包和当前包的所有子包，com.sample.service.impl包、子孙包下所有类的方法。
+
+ 4、第二个*号：表示类名，*号表示所有的类。
+
+ 5、*(..):最后这个星号表示方法名，*号表示所有的方法，后面括弧里面表示方法的参数，两个句点表示任何参数。
+
+
+```
 
 # factoryBean和beanFactory
 beanFactory是bean工厂

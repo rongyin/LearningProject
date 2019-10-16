@@ -110,7 +110,7 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 …
 
-List<Person> result = mongoTemplate.find(query(where("age").lt(50)
+List<Person> result = mongoTemplate.find(Query.query(Criteria.where("age").lt(50)
   .and("accounts.balance").gt(1000.00d)), Person.class);
 
 ```
